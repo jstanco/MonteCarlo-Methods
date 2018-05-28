@@ -1,0 +1,151 @@
+//created by John Stanco on 5/12/18
+
+#include "../include/Metropolis_Hastings_MC.hpp"
+#include "../include/Ising_1D.hpp"
+#include "../include/Ising_2D.hpp"
+#include <algorithm>
+
+template<class T>
+const double
+energy(T *chain)
+{
+	return chain->energy();
+}
+
+
+template<class T>
+const double
+magnetization(T *chain)
+{
+	return chain->mag();
+}
+
+
+template<class T>
+const double
+mag_squared(T *chain)
+{
+	return pow(chain->mag(), 2);
+}
+
+
+template<class T>
+const double
+abs_mag(T *chain)
+{
+	return std::abs(chain->mag());
+}
+
+
+template<class T1>
+const double
+energyExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+{
+	int size = MCMC.getChain()[0]->size();
+	return MCMC.expVal(energy) / size;
+}
+
+
+template<class T1>
+const double
+magExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+{
+	int size = MCMC.getChain()[0]->size();
+	return MCMC.expVal(abs_mag) / size;
+}
+
+
+template<class T1>
+const double
+specHeatExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+{
+	int size = MCMC.getChain()[0]->size();
+	return MCMC.variance(energy) / (k * T * T) / size;
+}
+
+
+template<class T1>
+const double
+magSusExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+{
+	int size = MCMC.getChain()[0]->size();
+	return MCMC.variance(abs_mag) / (k * T) / size;
+}
+
+
+template<class T1>
+int
+T_Dependence(double L, double J, double h, double TMax, double iter, const double (*f)(Metropolis_Hastings_MC<T1>&, double), std::string filename)
+{
+	FILE *pFile = fopen(filename.c_str(), "w.");
+	Metropolis_Hastings_MC<T1> MCMC;
+	double TMin = .5;
+	double mult = (TMax - TMin) / 100;
+	for(float i = 0; i < 100; i++){
+		double T = TMin + i * mult;
+		T1 *init = new T1(L, T, J, h);
+		MCMC.run(init, iter);
+		fprintf(pFile, "%.4f\t\t%.4f\n", T, f(MCMC, T));
+		delete init;
+	}
+	fclose(pFile);
+	return 1;
+}
+
+
+template<class T1>
+int
+runIsingModel(double L, double T, double J, double h, int iter)
+{
+	Metropolis_Hastings_MC<T1> MCMC;
+	T1 *init = new T1(L, T, J, h);
+	clock_t t = clock();
+	MCMC.run(init, iter);	
+	t = clock() - t;		
+	printf("\nExpectation value of magnetization of Ising Chain:  %f\n\n", MCMC.expVal(magnetization));
+	printf("Expectation value of energy of Ising Chain:  %f\n", MCMC.expVal(energy));
+	printf("\nIsing Chain length:  %d\nIterations:  %d\nTime:  %f\n\n", init->size(), iter, ((float)t) / CLOCKS_PER_SEC);
+	delete init;
+	return 1;
+}
+
+
+//need to compute the energy of a particular state
+
+int main()
+{
+	//set seed for random number generator
+	srand(time(NULL));
+
+	double L = 16;
+	double TMax = 5;
+	double J = 1;
+	double h = 0;
+	double iter = 1e6;
+
+	/*
+	std::string filename1 = "../data/Energy_1D.dat";
+	std::string filename2 = "../data/Magnetization_1D.dat";
+	std::string filename3 = "../data/Specific_Heat_Capacity_1D.dat";
+	std::string filename4 = "../data/Magnetic_Susceptibility_1D.dat";
+	
+	T_Dependence<Ising_1D>(L, J, h, TMax, iter, energyExp, filename1);
+	T_Dependence<Ising_1D>(L, J, h, TMax, iter, magExp, filename2);
+	T_Dependence<Ising_1D>(L, J, h, TMax, iter, specHeatExp, filename3);
+	T_Dependence<Ising_1D>(L, J, h, TMax, iter, magSusExp, filename4);
+	*/
+
+	
+	std::string filename5 = "../data/Energy_2D.dat";
+	std::string filename6 = "../data/Magnetization_2D.dat";
+	std::string filename7 = "../data/Specific_Heat_Capacity_2D.dat";
+	std::string filename8 = "../data/Magnetic_Susceptibility_2D.dat";
+	
+	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, energyExp, filename5);
+	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, magExp, filename6);
+	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, specHeatExp, filename7);
+	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, magSusExp, filename8);
+
+	runIsingModel<Ising_2D>(L, 1, J, h, iter);
+	return 1;
+}
