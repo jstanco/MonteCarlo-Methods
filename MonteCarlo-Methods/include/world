@@ -1,8 +1,0 @@
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <ctime>
-
-extern double k;
-extern double hBar;
-
