@@ -22,8 +22,8 @@ public:
 	Ising_2D(){}
 	Ising_2D(int, double, double, double);
 	Ising_2D(int, int, double, double, double);
-	Ising_2D(const Ising_2D&, bool);
 
+	virtual int update();
 	const std::vector<int>& getSpins() const;
 	const int size() const;
 

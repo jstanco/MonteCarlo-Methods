@@ -7,53 +7,17 @@
 #ifndef Metropolis_Hastings_MC_h
 #define Metropolis_Hastings_MC_h
 
+
 template<class T>
 class Metropolis_Hastings_MC : public MarkovChain<T>{
-protected:
-	virtual double acceptanceProb(T*, T*);
-	virtual bool accept(T*, T*);
-	virtual T* transition(T*);
 public:
 	Metropolis_Hastings_MC(){}
-
+	
 	double expVal(const double (*f)(T*));
 	double variance(const double (*f)(T*));
 
 	void printChain();
 };
-
-
-template<class T>
-inline double
-Metropolis_Hastings_MC<T>::acceptanceProb(T* prev, T* proposed)
-{
-	double pi = prev->logProb();
-	double pf = proposed->logProb();
-	return min(1, exp(pf - pi));
-}
-
-
-template<class T>
-inline bool
-Metropolis_Hastings_MC<T>::accept(T* prev, T* proposed)
-{
-	return flip(acceptanceProb(prev, proposed));
-}
-
-
-template<class T>
-inline T*
-Metropolis_Hastings_MC<T>::transition(T* prev)
-{
-	//this is 'mutation constructor,' creates mutated version of previous state
-	T *proposed = new T(*prev, true); 
-	if(this->accept(prev, proposed))
-	{
-		return proposed;
-	}
-	delete proposed;
-	return new T(*prev);
-}
 
 
 template<class T>

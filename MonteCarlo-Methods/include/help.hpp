@@ -2,12 +2,23 @@
 
 #include <cmath>
 #include <iostream>
+#include <random>
+#include "world"
+#include "/usr/local/include/armadillo"
 
 #ifndef help_h
 #define help_h
 
+
+int flip(double x);
+int randInt(uint a, uint b);
+int randInt(uint a);
 double min(double x1, double x2);
 double fRand(double fMin, double fMax);
-int flip(double x);
+double plusMinus(double x);
+double randNorm();
+arma::vec normDistVec(int n);
+arma::vec uniDistVec(int n);
+
 
 #endif /* help_h */

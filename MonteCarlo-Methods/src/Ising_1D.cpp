@@ -47,14 +47,14 @@ len(len), Ising_Base(T, J, h)
 }
 
 
-Ising_1D::Ising_1D(const Ising_1D& other, bool mutate) : 
-len(other.len), Ising_Base(other.T, other.J, other.h)
-{
+int
+Ising_1D::update(){
 	unsigned int index = rand() % this->len;
-	this->spins = other.spins;
+	//try change
 	this->spins[index] *= -1;
 	double dM = 2 * this->spins[index];
 	double dE = 0;
+
 	if(this->len < 2){
 		dE = 0;
 	} else {
@@ -62,8 +62,13 @@ len(other.len), Ising_Base(other.T, other.J, other.h)
 		dE -= 2 * J * this->spins[index] * this->spins[(index + 1) % this->len];
 		dE -= 2 * h * this->spins[index];
 	}
-	this->E = other.E + dE;
-	this->M = other.M + dM;
+	if(!this->accept(exp(-dE * this->B))){
+		spins[index] *= -1;
+	} else {
+		this->E += dE;
+		this->M += dM;
+	}
+	return 1;
 }
 
 

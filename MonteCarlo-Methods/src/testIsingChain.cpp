@@ -98,14 +98,13 @@ int
 runIsingModel(double L, double T, double J, double h, int iter)
 {
 	Metropolis_Hastings_MC<T1> MCMC;
-	T1 *init = new T1(L, T, J, h);
+	T1 init(L, T, J, h);
 	clock_t t = clock();
-	MCMC.run(init, iter);	
+	MCMC.run(&init, iter, 0, 0, true, false);	
 	t = clock() - t;		
 	printf("\nExpectation value of magnetization of Ising Chain:  %f\n\n", MCMC.expVal(magnetization));
 	printf("Expectation value of energy of Ising Chain:  %f\n", MCMC.expVal(energy));
-	printf("\nIsing Chain length:  %d\nIterations:  %d\nTime:  %f\n\n", init->size(), iter, ((float)t) / CLOCKS_PER_SEC);
-	delete init;
+	printf("\nIsing Chain length:  %d\nIterations:  %d\nTime:  %f\n\n", init.size(), iter, ((float)t) / CLOCKS_PER_SEC);
 	return 1;
 }
 
@@ -114,6 +113,9 @@ runIsingModel(double L, double T, double J, double h, int iter)
 
 int main()
 {
+	//better thing to do would be to pass in an array of function pointers
+	//These would all be run on the sate each time it is updated, then
+	//This would fall within the MCMC call f(state) on the state each time
 	//set seed for random number generator
 	srand(time(NULL));
 
@@ -140,6 +142,9 @@ int main()
 	std::string filename6 = "../data/Magnetization_2D.dat";
 	std::string filename7 = "../data/Specific_Heat_Capacity_2D.dat";
 	std::string filename8 = "../data/Magnetic_Susceptibility_2D.dat";
+
+
+	//Design the simulation in such a way that the 
 	
 	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, energyExp, filename5);
 	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, magExp, filename6);

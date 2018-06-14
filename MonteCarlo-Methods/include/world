@@ -5,4 +5,5 @@
 
 extern double k;
 extern double hBar;
+extern double pi;
 

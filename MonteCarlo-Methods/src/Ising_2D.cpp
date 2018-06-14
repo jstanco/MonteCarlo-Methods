@@ -61,18 +61,14 @@ len(len), wid(wid), nSpins(len * wid), Ising_Base(T, J, h)
 }
 
 
-//TODO break into other function
-Ising_2D::Ising_2D(const Ising_2D& other, bool mutate) : 
-len(other.len), wid(other.wid), nSpins(len * wid), Ising_Base(other.T, other.J, other.h)
-{
-	unsigned int i = rand() % this->len;
-	unsigned int j = rand() % this->wid;
-	this->spins = other.spins;
-	this->spins[i * this->len + j] *= -1;
+int
+Ising_2D::update(){
+	unsigned int i = rand() % len;
+	unsigned int j = rand() % wid;
+	this->spins[i * len + j] *= -1;
 	double dM = 2 * this->SUB(i, j);
 	double dE = 0;
-	if(this->len < 2)
-	{
+	if(this->len < 2){
 		dE = 0;
 	} else {
 		dE -= 2 * J * this->SUB(i, j) * this->SUB((i + this->len - 1) % this->len, j);
@@ -81,8 +77,13 @@ len(other.len), wid(other.wid), nSpins(len * wid), Ising_Base(other.T, other.J, 
 		dE -= 2 * J * this->SUB(i, j) * this->SUB(i, (j + 1) % this->wid);
 		dE -= 2 * h * this->SUB(i, j);
 	}
-	this->E = other.E + dE;
-	this->M = other.M + dM;
+	if(!this->accept(exp(-dE * this->B))){
+		this->spins[i * len + j] *= -1;
+	} else {
+		this->E += dE;
+		this->M += dM;
+	}
+	return 1;
 }
 
 

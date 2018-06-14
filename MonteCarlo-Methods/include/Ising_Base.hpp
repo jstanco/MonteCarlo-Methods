@@ -13,6 +13,7 @@ class Ising_Base : public State_Base_Bones
 {
 protected:
 	double T;
+	double B;
 	double J;
 	double h;
 	double E;
@@ -21,7 +22,6 @@ public:
 	Ising_Base(){}
 	Ising_Base(double, double, double);
 
-	const double logProb() const;
 	virtual const int size() const = 0;
 	const double temp() const;
 	const double energy() const;
@@ -40,7 +40,7 @@ public:
 
 inline
 Ising_Base::Ising_Base(double T, double J, double h) : 
-T(T), J(J), h(h), E(0), M(0) {}
+T(T), J(J), h(h), E(0), M(0), B(pow(k * T, -1)) {}
 
 
 inline const double
@@ -62,13 +62,6 @@ inline const double
 Ising_Base::temp() const
 {
 	return this->T;
-}
-
-
-inline const double
-Ising_Base::logProb() const
-{
-	return -this->E / (k * this->T);
 }
 
 

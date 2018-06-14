@@ -19,8 +19,8 @@ protected:
 public:
 	Ising_1D(){}
 	Ising_1D(int, double, double, double);
-	Ising_1D(const Ising_1D&, bool);
 
+	virtual int update();
 	const std::vector<int>& getSpins() const;
 	const int size() const;
 
