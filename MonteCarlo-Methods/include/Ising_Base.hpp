@@ -2,14 +2,14 @@
 
 //abstract Ising Model base class
 
-#include "State_Base_Bones.hpp"
+#include "state_base.hpp"
 
 
-#ifndef Ising_Base_h
-#define Ising_Base_h
+#ifndef ising_base_h
+#define ising_base_h
 
 
-class Ising_Base : public State_Base_Bones
+class ising_base : public state_base
 {
 protected:
 	double T;
@@ -19,16 +19,16 @@ protected:
 	double E;
 	double M;
 public:
-	Ising_Base(){}
-	Ising_Base(double, double, double);
+	ising_base(){}
+	ising_base(double, double, double);
 
 	virtual const int size() const = 0;
 	const double temp() const;
 	const double energy() const;
 	const double mag() const;
 
-	bool operator ==(const Ising_Base&);
-	bool operator >(const Ising_Base&);
+	bool operator ==(const ising_base&);
+	bool operator >(const ising_base&);
 	virtual int printData();
 };
 
@@ -39,12 +39,12 @@ public:
 
 
 inline
-Ising_Base::Ising_Base(double T, double J, double h) : 
+ising_base::ising_base(double T, double J, double h) : 
 T(T), J(J), h(h), E(0), M(0), B(pow(k * T, -1)) {}
 
 
 inline const double
-Ising_Base::energy() const
+ising_base::energy() const
 {
 	//printf("%f\n", this->E);
 	return this->E;
@@ -52,25 +52,25 @@ Ising_Base::energy() const
 
 
 inline const double
-Ising_Base::mag() const
+ising_base::mag() const
 {
 	return this->M;
 }
 
 
 inline const double
-Ising_Base::temp() const
+ising_base::temp() const
 {
 	return this->T;
 }
 
 
 inline int
-Ising_Base::printData()
+ising_base::printData()
 {
 	printf("Energy:  %f\nMagnetization:  %f\n", this->energy(), this->mag());
 	return 1;
 }
 
 
-#endif /* Ising_Base_h */
+#endif /* ising_base_h */

@@ -10,7 +10,7 @@
 
 
 arma::mat
-Lattice::recipLat()
+lattice::recipLat()
 {
   arma::mat	_recip(dim, dim);
   
@@ -29,14 +29,14 @@ Lattice::recipLat()
     _recip.col(0) *= 2 * pi / cell_vol;
     _recip.col(1) *= 2 * pi / cell_vol;
   } else {
-    throw "function recipLat : Improper Lattice Dimension. Lattice must be of dimension 2 or 3.";
+    throw "function recipLat : Improper lattice Dimension. Lattice must be of dimension 2 or 3.";
   }
   return _recip;
 }
 
 
 double
-Lattice::cellVolume(){
+lattice::cellVolume(){
   if(dim == 1){
     return norm(vectors.col(0));
   }
@@ -51,8 +51,8 @@ Lattice::cellVolume(){
 
 
 
-Lattice::Lattice(arma::mat &lat) : vectors(lat), dim(lat.n_cols), cell_vol(cellVolume()), recip(recipLat()) {}
+lattice::lattice(arma::mat &lat) : vectors(lat), dim(lat.n_cols), cell_vol(cellVolume()), recip(recipLat()) {}
 
 
 
-Lattice::Lattice(const Lattice &other) : vectors(other.vectors), dim(other.dim), cell_vol(other.cell_vol), recip(other.recip) {}
+lattice::lattice(const lattice &other) : vectors(other.vectors), dim(other.dim), cell_vol(other.cell_vol), recip(other.recip) {}

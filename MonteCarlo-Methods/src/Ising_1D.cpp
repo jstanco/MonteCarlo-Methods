@@ -1,6 +1,6 @@
 //created by John Stanco on 5/24/18
 
-#include "../include/Ising_1D.hpp"
+#include "../include/ising_1d.hpp"
 
 double k = 1;
 
@@ -11,7 +11,7 @@ double k = 1;
 
 
 std::vector<int>
-randomIsing_1D(unsigned int len)
+random_ising_1d(unsigned int len)
 {
 	std::vector<int> chain(len);
 	for(unsigned i = 0; i < len; i++){
@@ -23,7 +23,7 @@ randomIsing_1D(unsigned int len)
 
 
 std::vector<int>
-orderedIsing_1D(unsigned int len)
+ordered_ising_1d(unsigned int len)
 {
 	std::vector<int> chain(len);
 	for(unsigned i = 0; i < len; i++){
@@ -38,17 +38,17 @@ orderedIsing_1D(unsigned int len)
 //------------------------------------------------------------------------//
 
 
-Ising_1D::Ising_1D(int len, double T, double J, double h) : 
-len(len), Ising_Base(T, J, h)
+ising_1d::ising_1d(int len, double T, double J, double h) : 
+len(len), ising_base(T, J, h)
 {
-	this->spins = randomIsing_1D(len);
+	this->spins = random_ising_1d(len);
 	this->E = this->computeEnergy();
 	this->M = this->computeMag();
 }
 
 
 int
-Ising_1D::update(){
+ising_1d::update(){
 	unsigned int index = rand() % this->len;
 	//try change
 	this->spins[index] *= -1;
@@ -73,21 +73,21 @@ Ising_1D::update(){
 
 
 const int
-Ising_1D::size() const
+ising_1d::size() const
 {
 	return this->len;
 }
 
 
 inline const std::vector<int>&
-Ising_1D::getSpins() const
+ising_1d::getSpins() const
 {
 	return this->spins;
 }
 
 
 double
-Ising_1D::computeEnergy()
+ising_1d::computeEnergy()
 {
 	double Hs = spins[this->len - 1] * spins[0];
 	double Hm = this->spins[0];
@@ -101,7 +101,7 @@ Ising_1D::computeEnergy()
 
 
 double
-Ising_1D::computeMag(){
+ising_1d::computeMag(){
 	double acc = 0;
 	for(unsigned i = 0; i < this->len; i++)
 	{
@@ -112,18 +112,18 @@ Ising_1D::computeMag(){
 
 
 const int&
-Ising_1D::operator[](unsigned int i)
+ising_1d::operator[](unsigned int i)
 {
 	if(i > this->len - 1)
 	{
-		throw "|  function: Ising_1D::operator []  |  file: Ising_1D.cpp  |  error: Index out of bounds |";
+		throw "|  function: ising_1d::operator []  |  file: ising_1d.cpp  |  error: Index out of bounds |";
 	}
 	return this->spins[i];
 }
 
 
 inline bool
-Ising_1D::operator==(const Ising_1D &other)
+ising_1d::operator==(const ising_1d &other)
 {
 	if(this->len != other.len)
 	{

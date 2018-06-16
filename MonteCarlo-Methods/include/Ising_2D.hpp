@@ -4,12 +4,12 @@
 
 #include "world"
 #include "help.hpp"
-#include "Ising_base.hpp"
+#include "ising_base.hpp"
 
-#ifndef Ising_2D_h
-#define Ising_2D_h
+#ifndef ising_2d_h
+#define ising_2d_h
 
-class Ising_2D : public Ising_Base
+class ising_2d : public ising_base
 {
 protected:
 	int len;
@@ -19,18 +19,18 @@ protected:
 	double computeEnergy();
 	double computeMag();
 public:
-	Ising_2D(){}
-	Ising_2D(int, double, double, double);
-	Ising_2D(int, int, double, double, double);
+	ising_2d(){}
+	ising_2d(int, double, double, double);
+	ising_2d(int, int, double, double, double);
 
 	virtual int update();
 	const std::vector<int>& getSpins() const;
 	const int size() const;
 
 	const int& operator()(unsigned, unsigned);
-	bool operator==(const Ising_2D &other);
-	bool operator >(const Ising_2D&);
+	bool operator==(const ising_2d &other);
+	bool operator >(const ising_2d&);
 };
 
 
-#endif /* Ising_2D_h */
+#endif /* ising_2d_h */

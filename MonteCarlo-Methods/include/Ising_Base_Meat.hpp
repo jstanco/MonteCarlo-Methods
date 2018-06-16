@@ -2,7 +2,7 @@
 
 #include "State_Base_Meat.hpp"
 
-class Ising_Base_Meat : public State_Base_Meat{
+class ising_base_Meat : public State_Base_Meat{
 	int len;
 	double E;
 	double M;
@@ -10,15 +10,15 @@ class Ising_Base_Meat : public State_Base_Meat{
 	double computeEnergy(double, double);
 	double computeMag();
 public:
-	Ising_Base_Meat(){}
-	Ising_Base_Meat(int, double, double);
-	Ising_Base_Meat(int, double, double, const Ising_Base_Meat&);
+	ising_base_Meat(){}
+	ising_base_Meat(int, double, double);
+	ising_base_Meat(int, double, double, const ising_base_Meat&);
 	const std::vector<int>& getSpins() const;
 
 	const int size() const;
 	const double energy() const;
 	const double mag() const;
 
-	bool operator >(const Ising_Base_Meat&);
+	bool operator >(const ising_base_Meat&);
 	const int& operator[](unsigned);
 };

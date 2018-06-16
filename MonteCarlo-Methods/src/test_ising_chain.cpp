@@ -1,8 +1,8 @@
 //created by John Stanco on 5/12/18
 
-#include "../include/Metropolis_Hastings_MC.hpp"
-#include "../include/Ising_1D.hpp"
-#include "../include/Ising_2D.hpp"
+#include "../include/metropolis_hastings_mc.hpp"
+#include "../include/ising_1d.hpp"
+#include "../include/ising_2d.hpp"
 #include <algorithm>
 
 template<class T>
@@ -39,7 +39,7 @@ abs_mag(T *chain)
 
 template<class T1>
 const double
-energyExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+energyExp(metropolis_hastings_mc<T1>& MCMC, double T)
 {
 	int size = MCMC.getChain()[0]->size();
 	return MCMC.expVal(energy) / size;
@@ -48,7 +48,7 @@ energyExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
 
 template<class T1>
 const double
-magExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+magExp(metropolis_hastings_mc<T1>& MCMC, double T)
 {
 	int size = MCMC.getChain()[0]->size();
 	return MCMC.expVal(abs_mag) / size;
@@ -57,7 +57,7 @@ magExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
 
 template<class T1>
 const double
-specHeatExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+specHeatExp(metropolis_hastings_mc<T1>& MCMC, double T)
 {
 	int size = MCMC.getChain()[0]->size();
 	return MCMC.variance(energy) / (k * T * T) / size;
@@ -66,7 +66,7 @@ specHeatExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
 
 template<class T1>
 const double
-magSusExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
+magSusExp(metropolis_hastings_mc<T1>& MCMC, double T)
 {
 	int size = MCMC.getChain()[0]->size();
 	return MCMC.variance(abs_mag) / (k * T) / size;
@@ -75,10 +75,10 @@ magSusExp(Metropolis_Hastings_MC<T1>& MCMC, double T)
 
 template<class T1>
 int
-T_Dependence(double L, double J, double h, double TMax, double iter, const double (*f)(Metropolis_Hastings_MC<T1>&, double), std::string filename)
+T_Dependence(double L, double J, double h, double TMax, double iter, const double (*f)(metropolis_hastings_mc<T1>&, double), std::string filename)
 {
 	FILE *pFile = fopen(filename.c_str(), "w.");
-	Metropolis_Hastings_MC<T1> MCMC;
+	metropolis_hastings_mc<T1> MCMC;
 	double TMin = .5;
 	double mult = (TMax - TMin) / 100;
 	for(float i = 0; i < 100; i++){
@@ -97,7 +97,7 @@ template<class T1>
 int
 runIsingModel(double L, double T, double J, double h, int iter)
 {
-	Metropolis_Hastings_MC<T1> MCMC;
+	metropolis_hastings_mc<T1> MCMC;
 	T1 init(L, T, J, h);
 	clock_t t = clock();
 	MCMC.run(&init, iter, 0, 0, true, false);	
@@ -131,10 +131,10 @@ int main()
 	std::string filename3 = "../data/Specific_Heat_Capacity_1D.dat";
 	std::string filename4 = "../data/Magnetic_Susceptibility_1D.dat";
 	
-	T_Dependence<Ising_1D>(L, J, h, TMax, iter, energyExp, filename1);
-	T_Dependence<Ising_1D>(L, J, h, TMax, iter, magExp, filename2);
-	T_Dependence<Ising_1D>(L, J, h, TMax, iter, specHeatExp, filename3);
-	T_Dependence<Ising_1D>(L, J, h, TMax, iter, magSusExp, filename4);
+	T_Dependence<ising_1d>(L, J, h, TMax, iter, energyExp, filename1);
+	T_Dependence<ising_1d>(L, J, h, TMax, iter, magExp, filename2);
+	T_Dependence<ising_1d>(L, J, h, TMax, iter, specHeatExp, filename3);
+	T_Dependence<ising_1d>(L, J, h, TMax, iter, magSusExp, filename4);
 	*/
 
 	
@@ -146,11 +146,11 @@ int main()
 
 	//Design the simulation in such a way that the 
 	
-	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, energyExp, filename5);
-	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, magExp, filename6);
-	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, specHeatExp, filename7);
-	//T_Dependence<Ising_2D>(L, J, h, TMax, iter, magSusExp, filename8);
+	//T_Dependence<ising_2d>(L, J, h, TMax, iter, energyExp, filename5);
+	//T_Dependence<ising_2d>(L, J, h, TMax, iter, magExp, filename6);
+	//T_Dependence<ising_2d>(L, J, h, TMax, iter, specHeatExp, filename7);
+	//T_Dependence<ising_2d>(L, J, h, TMax, iter, magSusExp, filename8);
 
-	runIsingModel<Ising_2D>(L, 1, J, h, iter);
+	runIsingModel<ising_2d>(L, 1, J, h, iter);
 	return 1;
 }

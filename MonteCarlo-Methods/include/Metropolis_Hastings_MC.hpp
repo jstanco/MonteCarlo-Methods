@@ -2,16 +2,16 @@
 
 //General Purpose Metropolis Hastings Monte Carlo Simulation (Templated to recieve any type that contains basic methods
 
-#include "MarkovChain.hpp"
+#include "markov_chain.hpp"
 
-#ifndef Metropolis_Hastings_MC_h
-#define Metropolis_Hastings_MC_h
+#ifndef metropolis_hastings_mc_h
+#define metropolis_hastings_mc_h
 
 
 template<class T>
-class Metropolis_Hastings_MC : public MarkovChain<T>{
+class metropolis_hastings_mc : public markov_chain<T>{
 public:
-	Metropolis_Hastings_MC(){}
+	metropolis_hastings_mc(){}
 	
 	double expVal(const double (*f)(T*));
 	double variance(const double (*f)(T*));
@@ -22,7 +22,7 @@ public:
 
 template<class T>
 inline double
-Metropolis_Hastings_MC<T>::expVal(const double (*f)(T*))
+metropolis_hastings_mc<T>::expVal(const double (*f)(T*))
 {
 	double acc = 0;
 	double len = this->chain.size();
@@ -36,7 +36,7 @@ Metropolis_Hastings_MC<T>::expVal(const double (*f)(T*))
 
 template<class T>
 inline double
-Metropolis_Hastings_MC<T>::variance(const double (*f)(T*)){
+metropolis_hastings_mc<T>::variance(const double (*f)(T*)){
 	double acc = 0;
 	double len = this->chain.size();
 	double mean = this->expVal(f);
@@ -50,7 +50,7 @@ Metropolis_Hastings_MC<T>::variance(const double (*f)(T*)){
 
 template<class T>
 inline void
-Metropolis_Hastings_MC<T>::printChain(){
+metropolis_hastings_mc<T>::printChain(){
 	for(unsigned i = 0; i < this->chain.size(); i++)
 	{
 		std::cout << i << "    " << this->chain[i].logProb() << std::endl;
@@ -58,4 +58,4 @@ Metropolis_Hastings_MC<T>::printChain(){
 }
 
 
-#endif /* Metropolis_Hastings_MC_h */
+#endif /* metropolis_hastings_mc_h */

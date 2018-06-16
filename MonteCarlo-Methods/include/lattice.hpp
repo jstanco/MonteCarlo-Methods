@@ -14,7 +14,7 @@
 #define lattice_hpp
 
 //Currently supports any output of wannier90;
-class Lattice{
+class lattice{
 private:
   const arma::mat   vectors;
   const arma::mat   recip;
@@ -28,8 +28,8 @@ private:
   arma::mat recipLat();
 public:
   //Lattice();
-  Lattice(arma::mat &lat);
-  Lattice(const Lattice &other);
+  lattice(arma::mat &lat);
+  lattice(const lattice &other);
 };
 
 #endif /* lattice_hpp */

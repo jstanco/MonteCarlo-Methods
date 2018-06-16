@@ -2,7 +2,7 @@
 
 //testing markovChain
 
-#include "../include/Metropolis_Hastings_MC.hpp"
+#include "../include/metropolis_hastings_mc.hpp"
 
 int main(){
 

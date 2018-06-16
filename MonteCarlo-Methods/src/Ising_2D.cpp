@@ -1,6 +1,6 @@
 //created by John Stanco on 5/26/18
 
-#include "../include/Ising_2D.hpp"
+#include "../include/ising_2d.hpp"
 
 #define SUB operator()
 
@@ -11,7 +11,7 @@
 
 
 std::vector<int>
-randomIsing_2D(unsigned int len, unsigned int wid)
+random_ising_2d(unsigned int len, unsigned int wid)
 {
 	unsigned int size = len * wid;
 	std::vector<int> chain(size);
@@ -25,7 +25,7 @@ randomIsing_2D(unsigned int len, unsigned int wid)
 
 
 std::vector<int>
-orderedIsing_2D(unsigned int len, unsigned int wid)
+ordered_ising_2d(unsigned int len, unsigned int wid)
 {
 	unsigned int size = len * wid;
 	std::vector<int> chain(size);
@@ -43,26 +43,26 @@ orderedIsing_2D(unsigned int len, unsigned int wid)
 
 
 //square <--> len = wid
-Ising_2D::Ising_2D(int size, double T, double J, double h) : 
-len(size), wid(size), nSpins(len * wid), Ising_Base(T, J, h)
+ising_2d::ising_2d(int size, double T, double J, double h) : 
+len(size), wid(size), nSpins(len * wid), ising_base(T, J, h)
 {
-	this->spins = randomIsing_2D(len, wid);
+	this->spins = random_ising_2d(len, wid);
 	this->E = this->computeEnergy();
 	this->M = this->computeMag();
 }
 
 
-Ising_2D::Ising_2D(int len, int wid, double T, double J, double h) : 
-len(len), wid(wid), nSpins(len * wid), Ising_Base(T, J, h)
+ising_2d::ising_2d(int len, int wid, double T, double J, double h) : 
+len(len), wid(wid), nSpins(len * wid), ising_base(T, J, h)
 {
-	this->spins = randomIsing_2D(len, wid);
+	this->spins = random_ising_2d(len, wid);
 	this->E = this->computeEnergy();
 	this->M = this->computeMag();
 }
 
 
 int
-Ising_2D::update(){
+ising_2d::update(){
 	unsigned int i = rand() % len;
 	unsigned int j = rand() % wid;
 	this->spins[i * len + j] *= -1;
@@ -88,21 +88,21 @@ Ising_2D::update(){
 
 
 const int
-Ising_2D::size() const
+ising_2d::size() const
 {
 	return this->nSpins;
 }
 
 
 inline const std::vector<int>&
-Ising_2D::getSpins() const
+ising_2d::getSpins() const
 {
 	return this->spins;
 }
 
 
 double
-Ising_2D::computeEnergy()
+ising_2d::computeEnergy()
 {
 	double Hs = 0;
 	double Hm = 0;
@@ -118,7 +118,7 @@ Ising_2D::computeEnergy()
 
 
 double
-Ising_2D::computeMag(){
+ising_2d::computeMag(){
 	double acc = 0;
 	for(unsigned i = 0; i < this->nSpins; i++)
 	{
@@ -129,18 +129,18 @@ Ising_2D::computeMag(){
 
 
 const int&
-Ising_2D::operator()(unsigned int i, unsigned int j)
+ising_2d::operator()(unsigned int i, unsigned int j)
 {
 	if((i > this->len - 1) || (j > this->wid - 1))
 	{
-		throw "|  function: Ising_2D::operator ()  |  file: Ising_2D.cpp  |  error: Index out of bounds |";
+		throw "|  function: ising_2d::operator ()  |  file: ising_2d.cpp  |  error: Index out of bounds |";
 	}
 	return this->spins[i * this->len + j];
 }
 
 
 inline bool
-Ising_2D::operator==(const Ising_2D &other)
+ising_2d::operator==(const ising_2d &other)
 {
 	if((this->len != other.len) || (this->wid != other.wid))
 	{

@@ -3,20 +3,20 @@
 #include <utility>
 #include <vector>
 
-#ifndef Distribution_h
-#define Distribution_h
+#ifndef distribution_h
+#define distribution_h
 
 //needs to be made faster!
 
 template<class T>
-class Distribution{
+class distribution{
 protected:
 	int len;
 	std::vector<std::pair<T*, double> > dist;
 public:
-	Distribution();
-	Distribution(std::vector<T*>&);
-	Distribution(std::vector<T>&);
+	distribution();
+	distribution(std::vector<T*>&);
+	distribution(std::vector<T>&);
 
 	const std::vector<std::pair<T*, double> >& getData() const;
 	const T& data(unsigned) const;
@@ -25,11 +25,11 @@ public:
 	double expVal(const double (*f)(const T&));
 };
 
-#endif /* Distribution_h */
+#endif /* distribution_h */
 
 
 template<class T>
-inline Distribution<T>::Distribution() : len(0) {}
+inline distribution<T>::distribution() : len(0) {}
 
 
 template<class T>
@@ -45,7 +45,7 @@ bool compare(T a, T b){
 
 
 template<class T>
-inline Distribution<T>::Distribution(std::vector<T*> &chain) : len(0){
+inline distribution<T>::distribution(std::vector<T*> &chain) : len(0){
 	int chainLen = chain.size();
 	std::sort(chain.begin(), chain.end(), compare_p<T>);
 	unsigned int i = 0;
@@ -65,7 +65,7 @@ inline Distribution<T>::Distribution(std::vector<T*> &chain) : len(0){
 
 
 template<class T>
-inline Distribution<T>::Distribution(std::vector<T> &chain) : len(0){
+inline distribution<T>::distribution(std::vector<T> &chain) : len(0){
 	int chainLen = chain.size();
 	std::sort(chain.begin(), chain.end(), compare<T>);
 	unsigned int i = 0;
@@ -87,7 +87,7 @@ inline Distribution<T>::Distribution(std::vector<T> &chain) : len(0){
 
 template<class T>
 inline double
-Distribution<T>::expVal(const double (*f)(const T&)){
+distribution<T>::expVal(const double (*f)(const T&)){
 	double acc = 0;
 	for(unsigned i = 0; i < this->len; i++){
 		acc += f(this->data(i)) * this->prob(i);
@@ -98,27 +98,27 @@ Distribution<T>::expVal(const double (*f)(const T&)){
 
 template<class T>
 inline const T&
-Distribution<T>::data(unsigned int i) const {
+distribution<T>::data(unsigned int i) const {
 	return *(dist[i].first);
 }
 
 
 template<class T>
 inline const double&
-Distribution<T>::prob(unsigned int i) const {
+distribution<T>::prob(unsigned int i) const {
 	return dist[i].second;
 }
 
 
 template<class T>
 inline const std::vector<std::pair<T*, double> >& 
-Distribution<T>::getData() const {
+distribution<T>::getData() const {
 	return this->dist;
 }
 
 template<class T>
 inline const unsigned int
-Distribution<T>::size() const {
+distribution<T>::size() const {
 	return this->len;
 }
 

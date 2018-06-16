@@ -4,12 +4,12 @@
 
 #include "world"
 #include "help.hpp"
-#include "Ising_base.hpp"
+#include "ising_base.hpp"
 
-#ifndef Ising_1D_h
-#define Ising_1D_h
+#ifndef ising_1d_h
+#define ising_1d_h
 
-class Ising_1D : public Ising_Base
+class ising_1d : public ising_base
 {
 protected:
 	int len;
@@ -17,20 +17,20 @@ protected:
 	double computeEnergy();
 	double computeMag();
 public:
-	Ising_1D(){}
-	Ising_1D(int, double, double, double);
+	ising_1d(){}
+	ising_1d(int, double, double, double);
 
 	virtual int update();
 	const std::vector<int>& getSpins() const;
 	const int size() const;
 
 	const int& operator[](unsigned);
-	bool operator==(const Ising_1D &other);
-	bool operator >(const Ising_1D&);
+	bool operator==(const ising_1d &other);
+	bool operator >(const ising_1d&);
 };
 
 
-#endif /* Ising_1D_h */
+#endif /* ising_1d_h */
 
 
 //------------ TODO ------------//

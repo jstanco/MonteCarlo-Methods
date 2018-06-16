@@ -2,11 +2,11 @@
 
 #include "help.hpp"
 
-#ifndef State_Base_Bones_h
-#define State_Base_Bones_h
+#ifndef state_base_h
+#define state_base_h
 
 
-class State_Base_Bones{
+class state_base{
 protected:
 	virtual bool accept(double);
 public:
@@ -16,11 +16,11 @@ public:
 
 
 inline bool
-State_Base_Bones::accept(double logProb){
+state_base::accept(double logProb){
 	if(logProb >= 0) return 1;
 	return flip(exp(logProb));
 
 }
 
 
-#endif /* State_Base_Bones_h */
+#endif /* state_base_h */

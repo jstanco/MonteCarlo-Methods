@@ -6,9 +6,9 @@ CC = g++
 DEBUG = -g
 CFLAGS = -c -I$(IDIR) $(DEBUG)
 
-_OBJS = Ising_1D.o Ising_2D.o PIMC_State.o  help.o lattice.o
+_OBJS = ising_1d.o ising_2d.o pimc_state.o help.o lattice.o
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
-_DEPS = MarkovChain.hpp Metropolis_Hastings_MC.hpp Ising_Base.hpp Ising_1D.hpp Ising_2D.hpp PIMC_Base.hpp PIMC_State.hpp State_Base_Bones.hpp help.hpp lattice.hpp
+_DEPS = markov_chain.hpp metropolis_hastings_mc.hpp ising_base.hpp ising_1d.hpp ising_2d.hpp pimc.hpp state_base.hpp help.hpp lattice.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 LFLAGS = $(DEBUG)
@@ -20,13 +20,13 @@ Markov : markov
 
 PIMC : pimc
 
-markov : $(ODIR)/testMarkov.o
+markov : $(ODIR)/test_markov.o
 	@$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-pimc : $(ODIR)/testPIMC.o $(OBJS)
+pimc : $(ODIR)/test_pimc.o $(OBJS)
 	@$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-main : $(ODIR)/testIsingChain.o $(OBJS)
+main : $(ODIR)/test_ising_chain.o $(OBJS)
 	@$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 $(ODIR)/%.o : %.cpp $(DEPS)

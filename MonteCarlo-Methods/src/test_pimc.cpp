@@ -1,7 +1,7 @@
 //created by John Stanco 6.2.18
 
-#include "../include/PIMC_State.hpp"
-#include "../include/Metropolis_Hastings_MC.hpp"
+#include "../include/pimc.hpp"
+#include "../include/metropolis_hastings_mc.hpp"
 #include <chrono>
 
 double
@@ -184,13 +184,13 @@ int testRNG(){
 int main(){
 	srand(time(NULL));
 	double T = 1;
-	uint n_slice = 64;
+	uint n_slice = 8192;
 	uint n_part = 4;
-
+	double rc = 2 * 1.122;
 
 	arma::vec masses(arma::ones(n_part) * 2);
 	arma::vec sigma(arma::ones(n_part) * 2);
-	arma::vec eps(arma::ones(n_part) * 10);
+	arma::vec eps(arma::ones(n_part) * 100);
 	arma::mat pos(2, n_part);
 
 
@@ -200,10 +200,10 @@ int main(){
 	arma::vec r4;
 
 
-	r1 << 1 << 1 << arma::endr;
-	r2 << 1 << -1 << arma::endr;
-	r3 << -1 << 1 << arma::endr;
-	r4 << -1 << -1 << arma::endr;
+	r1 << 0 << 0 << arma::endr;
+	r2 << 1 << 1 << arma::endr;
+	r3 << 0 << 1 << arma::endr;
+	r4 << 1 << 0 << arma::endr;
 
 
 	pos.col(0) = r1;
@@ -212,16 +212,17 @@ int main(){
 	pos.col(3) = r4;
 
 
-	Metropolis_Hastings_MC<PIMC_State> PIMC;
+	metropolis_hastings_mc<pimc_state> PIMC;
 
-	uint iter = 80000;
+	//uint iter = 80000;
+	uint iter = 30;
 
-	PIMC_State init = PIMC_State::builder().setTemp(T)
+	pimc_state init = pimc_state::builder().setTemp(T)
 											.setSlices(n_slice)
 											.setMasses(masses)
 											.setSigma(sigma)
 											.setEps(eps)
-											.setPos(pos)
+											.setPaths(pos * rc)
 											.build();
 
 

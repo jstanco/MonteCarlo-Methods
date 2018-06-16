@@ -6,12 +6,12 @@
 #include "Distribution.hpp"
 
 
-#ifndef MarkovChain_h
-#define MarkovChain_h
+#ifndef markov_chain_h
+#define markov_chain_h
 
 
 template<class T>
-class MarkovChain
+class markov_chain
 {
 protected:
 	std::vector<T*> chain;
@@ -20,8 +20,8 @@ protected:
 	int burn(T* state, uint iter);
 	virtual int printData(T* state, uint iter);
 public:
-	MarkovChain(){};
-	~MarkovChain();
+	markov_chain(){};
+	~markov_chain();
 	virtual inline int run(T*, unsigned, unsigned burn = 0, unsigned lag = 0, bool save = false, bool print = false);
 	virtual int clear();
 
@@ -31,14 +31,14 @@ public:
 
 template<class T>
 inline
-MarkovChain<T>::~MarkovChain(){
+markov_chain<T>::~markov_chain(){
 	clear();
 }
 
 
 template<class T>
 inline T*
-MarkovChain<T>::transition(T* prev){
+markov_chain<T>::transition(T* prev){
 	T* proposed = new T(*prev);
 	proposed->update();
 	return proposed;
@@ -47,7 +47,7 @@ MarkovChain<T>::transition(T* prev){
 
 template<class T>
 inline int
-MarkovChain<T>::printData(T* state, uint toGo){
+markov_chain<T>::printData(T* state, uint toGo){
 	printf("|------------------------------------------------|\n");
 	printf("Iterations to go:   %d\n", toGo);
 	state->printData();
@@ -57,7 +57,7 @@ MarkovChain<T>::printData(T* state, uint toGo){
 
 template<class T>
 inline int
-MarkovChain<T>::initialize(){
+markov_chain<T>::initialize(){
 	clear();
 	chain = std::vector<T*>();
 	return 1;
@@ -66,7 +66,7 @@ MarkovChain<T>::initialize(){
 
 template<class T>
 inline int
-MarkovChain<T>::burn(T* state, uint _burn){
+markov_chain<T>::burn(T* state, uint _burn){
 	for(uint i = 0; i < _burn; i++){
 		state->update();
 	}
@@ -76,7 +76,7 @@ MarkovChain<T>::burn(T* state, uint _burn){
 
 template<class T>
 inline int
-MarkovChain<T>::run(T *init, unsigned int iter, unsigned int _burn, unsigned int lag, bool save, bool print)
+markov_chain<T>::run(T *init, unsigned int iter, unsigned int _burn, unsigned int lag, bool save, bool print)
 {
 	initialize();
 	chain.push_back(new T(*init));
@@ -106,7 +106,7 @@ MarkovChain<T>::run(T *init, unsigned int iter, unsigned int _burn, unsigned int
 
 template<class T>
 inline int
-MarkovChain<T>::clear(){
+markov_chain<T>::clear(){
 	for(unsigned i = 0; i < chain.size(); i++)
 	{
 		if(this->chain[i]) delete this->chain[i];
@@ -118,8 +118,8 @@ MarkovChain<T>::clear(){
 
 template<class T>
 inline std::vector<T*>&
-MarkovChain<T>::getChain()
+markov_chain<T>::getChain()
 {
 	return this->chain;
 }
-#endif /* MarkovChain_h */
+#endif /* markov_chain_h */
