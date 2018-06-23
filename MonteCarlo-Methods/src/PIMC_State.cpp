@@ -46,7 +46,7 @@ pimc_state::pimc_state(double T, uint n_slice,
 					l_max(floor(log2(n_slice - 1))),
 					clip_size(pow(2, floor(log2(n_slice - 1))) + 1),
 					t0_max(n_slice - pow(2, floor(log2(n_slice - 1))) - 1),
-					masses(calcMasses(T, n_slice, masses)),
+					therm_wl(calcWl(T, n_slice, masses)),
 					sigma(sigma), 
 					eps(calcEps(T, n_slice, eps)),
 					paths(calcPaths(n_slice, paths_mat)) {}
@@ -100,8 +100,12 @@ pimc_state::builder::build(){
 
 
 arma::vec
-pimc_state::calcMasses(double T, uint n_slice, const arma::vec& m){
-	return arma::vec(m * k * T * n_slice / (2 * alpha));
+pimc_state::calcWl(double T, uint n_slice, const arma::vec& m){
+	arma::vec _therm_wl(m.size());
+	for(uint i = 0; i < m.size(); i++){
+		_therm_wl(i) = pow(2 * m(i) * k * T * n_slice / alpha, -.5);
+	}
+	return _therm_wl;
 }	
 
 
@@ -150,7 +154,7 @@ pimc_state::moveParticle(uint p_index, const arma::vec& dr){
 double
 pimc_state::potential(uint p_index, const bead& r0, const bead& r1){
 	double r = norm(r1 - r0);
-	if(r < pow(masses(p_index), -.5)){ 
+	if(r < therm_wl(p_index)){ 
 		double A = pow(sigma(p_index) / r, 6);
 		return A * (A - 1);
 	}
@@ -184,7 +188,7 @@ pimc_state::kineticChange(uint p_index, uint t, const bead& r0, const bead& r1){
 	dS -= kinetic(p_index, r0, paths.tube(p_index, (t + n_slice - 1) % n_slice));
 	dS += kinetic(p_index, r1, paths.tube(p_index, (t + 1) % n_slice));
 	dS += kinetic(p_index, r1, paths.tube(p_index, (t + n_slice - 1) % n_slice));
-	return dS * masses(p_index);
+	return dS / (2 * pow(therm_wl(p_index), 2));
 }
 
 
@@ -195,7 +199,7 @@ double
 pimc_state::midPoint(const int pInd[], uint pSize, uint t, uint s){
 	double dS = 0;
 	for(uint i = 0; i < pSize; i++){
-		arma::vec dr = sqrt(((double)s / 4) / masses(pInd[i])) * normDistVec(dim);
+		arma::vec dr = therm_wl(pInd[i]) * sqrt(s) * normDistVec(dim);
 		bead newBead = .5 * (paths.tube(pInd[i], t + s) + paths.tube(pInd[i], t - s));
 		dS += potentialChange(pInd[i], t, paths.tube(pInd[i], t), newBead + dr);
 		setBead(pInd[i], t, newBead + dr);
@@ -205,11 +209,11 @@ pimc_state::midPoint(const int pInd[], uint pSize, uint t, uint s){
 
 
 int
-pimc_state::rev_bisect(const int pInd[], uint pSize, uint t0, uint _l){
+pimc_state::rev_bisect(const int pInd[], uint pSize, uint t0, uint _l, uint _l_max){
 	uint t, dt, s, n;
 
 	for(uint l = 1; l <= _l; l++){
-		s = pow(2, l_max - l);
+		s = pow(2, _l_max - l);
 		n = pow(2, l - 1);
 		for(int m = 0; m < n; m++){
 			dt = (2 * m + 1) * s;
@@ -225,11 +229,11 @@ pimc_state::rev_bisect(const int pInd[], uint pSize, uint t0, uint _l){
 
 
 int
-pimc_state::bisect(const int pInd[], uint pSize, uint t0, uint l_max){
+pimc_state::bisect(const int pInd[], uint pSize, uint t0, uint _l_max){
 	int n, s, t, dt;
 	double dS = 0;
-	for(uint l = 1; l <= l_max; l++){
-		s = pow(2, l_max - l);
+	for(uint l = 1; l <= _l_max; l++){
+		s = pow(2, _l_max - l);
 		n = pow(2, l - 1);
 		for(int m = 0; m < n; m++){
 			dt = (2 * m + 1) * s;
@@ -241,7 +245,7 @@ pimc_state::bisect(const int pInd[], uint pSize, uint t0, uint l_max){
 			dS += midPoint(pInd, pSize, t, s);
 		}
 		if(!accept(-dS * s)){
-			rev_bisect(pInd, pSize, t0, l);
+			rev_bisect(pInd, pSize, t0, l, _l_max);
 			return 0;
 		}
 	}
@@ -250,31 +254,60 @@ pimc_state::bisect(const int pInd[], uint pSize, uint t0, uint l_max){
 
 
 int
-pimc_state::rev_permute(const int pInd[], uint pSize){
-	return 1;
+pimc_state::inverseCycle(const int cycle[], uint pSize, uint t){
+	bead tmp = paths.tube(cycle[pSize - 1], t);
+	for(uint i = pSize - 1; i > 0; i--){
+		setBead(cycle[i], t, paths.tube(cycle[i - 1], t));
+	}
+	return setBead(cycle[0], t, tmp);
+}
+
+
+
+int
+pimc_state::cycleEndpts(const int cycle[], uint pSize, uint t){
+	bead tmp = paths.tube(cycle[0], t);
+	for(uint i = 0; i < pSize - 1; i++){
+		setBead(cycle[i], t, paths.tube(cycle[i + 1], t));
+	}
+	return setBead(cycle[pSize - 1], t, tmp);
 }
 
 
 int
 pimc_state::permute(const int pInd[], uint pSize){
-	int t0 = randInt(t0_max);
-	int path_len = pow(2, l_max);
-	old_paths = path_storage(pSize, path_len, dim);
 
+	int t0 = randInt(t0_max);
+	int tf = t0 + clip_size - 1;
+	old_paths = path_storage(pSize, clip_size, dim);
+	cycleEndpts(pInd, pSize, tf);
 	if(bisect(pInd, pSize, t0, l_max)){
 		return 1;
 	} 
 
-	rev_permute(pInd, pSize);
+	inverseCycle(pInd, pSize, tf);
 	return 0;
 }
+
+
+//store permutation as cycle (k1 k2 k3 ... kn)
+//This is pInd ... tells us what to do with each one
+//We move from pInd[i] to pInd[i-1]
+
+//should define the single-slice sampling to be of the form
+//in which we sample from a gaussian first...
+
 
 
 int
 pimc_state::permutation(){
 	//handle permutation logic
-	int pSize = randInt(n_part);
+	int pSize = 4;
 	int pInd[pSize];
+	pInd[0] = 1;
+	pInd[1] = 2;
+	pInd[2] = 3;
+	pInd[4] = 0;
 	startMove(pInd, pSize);
 
 	int rVal = permute(pInd, pSize);
@@ -283,9 +316,16 @@ pimc_state::permutation(){
 	return rVal;
 }
 
+//var buildPermutation = function(particles)
+//if(empty(particles)) return []
+//i = uniformDraw(particles)
+//if(good(i)) return [i].concat(buildPermutation(particles.remove[i]))
+//return buildPermutation(particles)
+
 
 int
 pimc_state::bisection(){
+	//want to ensure that the number of moves is 
 	int moveSize = 1;//randInt(n_part);
 	int pInd[moveSize];
 
@@ -295,7 +335,7 @@ pimc_state::bisection(){
 	int t0 = randInt(t0_max);
 
 	startMove(pInd, moveSize);
-	old_paths = path_storage(moveSize, pow(2, l_max), dim);
+	old_paths = path_storage(moveSize, clip_size, dim);
 	
 	int rVal = bisect(pInd, moveSize, t0, l_max);
 
@@ -308,7 +348,7 @@ double
 pimc_state::checkParticleMove(uint p_index, const arma::vec& dr){
 	double dS = 0;
 	for(unsigned i = 0; i < n_slice; i++){
-		arma::vec tmp = paths.tube(p_index, i);
+		bead tmp = paths.tube(p_index, i);
 		dS += potentialChange(p_index, i, tmp, tmp + dr);
 	}	
 	return dS;
@@ -318,13 +358,12 @@ pimc_state::checkParticleMove(uint p_index, const arma::vec& dr){
 int
 pimc_state::centerOfMass(){
 	int p_index = randInt(n_part);
-	arma::vec dr = .5 * uniDistVec(dim) / sqrt(masses(p_index));	
+	arma::vec dr = uniDistVec(dim) * therm_wl(p_index);	
 	double dS = checkParticleMove(p_index, dr);
 	//printf("Change in action from moving particle %u:\t%f\n", p_index, dS);
 	if(accept(-dS)){
 		//printf("Particle move accepted!\n");
 		moveParticle(p_index, dr);
-		//update observables
 		return 1;
 	} else {
 		//printf("Particle move rejected!\n");
@@ -339,7 +378,7 @@ pimc_state::checkSingleBeadMove(uint p_index, uint t, const bead& dr){
 	arma::vec tmp = paths.tube(p_index, t);
 	dS += potentialChange(p_index, t, tmp, tmp + dr);
 	dS += kineticChange(p_index, t, tmp, tmp + dr);
-	//printf("dE: %f\n", dE);
+	//printf("dS: %f\n", dS);
 	return dS;
 }
 
@@ -348,7 +387,7 @@ int
 pimc_state::singleSlice(){
 	int p_index = randInt(n_part);
 	int t = randInt(1, n_slice - 1);
-	arma::vec dr  = .5 * uniDistVec(dim) / sqrt(masses(p_index));
+	arma::vec dr = uniDistVec(dim) * therm_wl(p_index);
 	double dS = checkSingleBeadMove(p_index, t, dr);
 	//printf("Change in action from moving bead %u, %u:\t%f\n", p_index, t, dS);
 	if(accept(-dS)){
@@ -371,12 +410,12 @@ pimc_state::singleSlice(){
 int
 pimc_state::update(){
 	//printf("--------------------------------------------\n");
-	if(flip(1)){
-		return bisection();
+	if(flip(.3)){
+		return permutation();
 	} else if (flip(.3)){
 		return centerOfMass();
 	} else {
-		return singleSlice();	
+		return bisection();	
 	}
 	//printf("--------------------------------------------\n");
 	return 1;

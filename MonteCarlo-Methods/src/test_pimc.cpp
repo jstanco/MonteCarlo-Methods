@@ -147,51 +147,19 @@ int testRNG(){
 }
 
 
-//need to: set the positions of particles via...
-//given a lattice, we should have some way to generate the cube pos.
-//This works by periodically repeating the lattice...(can use bravais lattice selector from tb)
-//This would shift us to a general condensed matter interface .. See the transition to a type of COMSOL
-//but for condensed matter.. (Is this as reliable as COMSOL?)
-
-
-//TODO
-
-//	1) Check if masses are being copied
-//	2) Produce pos from masses
-//	4) Must store every position vector(unavoidable)
-//	5) Masses are never copied, so not as difficult
-//	6) Fix printing (Be able to print every state in chain)
-//		Maybe have some internal method (get data) that prints to a file
-//		Define an << operator that prints to some stream...			
-//	7) Also consider the strength of potential between
-//		different atoms
-//		this must also be stored in some sort of dictionary
-//		Define this data structure:
-//		- Lattice -> all atom-atom interaction potential info
-//					 mass of each atom
-//					 Index each atom in the lattice {0 ... N - 1}
-//					 Index of atom in simulation is i -> atom type is i % N;
-//					 n^2 atom-interactions? 
-//					 Store some periodic table inside sim...
-//					 Lennard Jones potential info...tables available online
-
-
-//We want our states to be able to...
-//
-
-
 
 int main(){
 	srand(time(NULL));
 	double T = 1;
-	uint n_slice = 8192;
-	uint n_part = 4;
-	double rc = 2 * 1.122;
 
-	arma::vec masses(arma::ones(n_part) * 2);
+	uint n_slice = pow(2, 13) + 1;
+	uint n_part = 4;
+	double rc = 2;
+
+	arma::vec masses(arma::ones(n_part) * rc / 1.122);
 	arma::vec sigma(arma::ones(n_part) * 2);
 	arma::vec eps(arma::ones(n_part) * 100);
-	arma::mat pos(2, n_part);
+	arma::mat pos(3, n_part);
 
 
 	arma::vec r1;
@@ -200,10 +168,10 @@ int main(){
 	arma::vec r4;
 
 
-	r1 << 0 << 0 << arma::endr;
-	r2 << 1 << 1 << arma::endr;
-	r3 << 0 << 1 << arma::endr;
-	r4 << 1 << 0 << arma::endr;
+	r1 << 0 << 0 << 0 << arma::endr;
+	r2 << 1 << 1 << 0 << arma::endr;
+	r3 << 0 << 1 << 1 << arma::endr;
+	r4 << 1 << 0 << 1 << arma::endr;
 
 
 	pos.col(0) = r1;
@@ -214,8 +182,8 @@ int main(){
 
 	metropolis_hastings_mc<pimc_state> PIMC;
 
-	//uint iter = 80000;
-	uint iter = 30;
+	uint iter = 90;
+	//uint iter = 30;
 
 	pimc_state init = pimc_state::builder().setTemp(T)
 											.setSlices(n_slice)
