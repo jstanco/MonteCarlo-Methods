@@ -10,7 +10,7 @@
 #define help_h
 
 
-int flip(double x);
+int flip(double x = .5);
 int randInt(uint a, uint b);
 int randInt(uint a);
 double min(double x1, double x2);

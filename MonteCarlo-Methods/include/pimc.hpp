@@ -23,13 +23,13 @@ protected:
 	std::vector<bool> isMoved;
 	path_storage 	paths;
 	path_storage	old_paths;
-	const arma::vec masses;
+	const arma::vec therm_wl;
 	//parameters for Lennard-Jones potential (atom-dependent)
 	const arma::vec sigma;
 	const arma::vec eps;
 	
 
-	arma::vec calcMasses(double, uint, const arma::vec&);
+	arma::vec calcWl(double, uint, const arma::vec&);
 	arma::vec calcEps(double, uint, const arma::vec&);
 	path_storage calcPaths(uint, const arma::mat&);
 
@@ -46,10 +46,12 @@ protected:
 	virtual double checkParticleMove(uint, const bead&);
 	virtual double checkSingleBeadMove(uint, uint, const bead&);
 	virtual double midPoint(const int[], uint, uint, uint);
+	virtual int	cycleEndpts(const int[], uint, uint);
+	virtual int inverseCycle(const int[], uint, uint);
 
-	virtual int rev_permute(const int[], uint);
+	
 	virtual int permute(const int[], uint);
-	virtual int rev_bisect(const int[], uint, uint, uint);
+	virtual int rev_bisect(const int[], uint, uint, uint, uint);
 	virtual int	bisect(const int[], uint, uint, uint);
 
 	int startMove(const int[], uint);
