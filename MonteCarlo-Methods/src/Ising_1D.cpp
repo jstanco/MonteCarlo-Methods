@@ -54,7 +54,8 @@ ising_1d::update(){
 	this->spins[index] *= -1;
 	double dM = 2 * this->spins[index];
 	double dE = 0;
-
+	std::cout << "update" << std::endl;
+	//std::cout << this->E <<std::endl;
 	if(this->len < 2){
 		dE = 0;
 	} else {
@@ -62,12 +63,14 @@ ising_1d::update(){
 		dE -= 2 * J * this->spins[index] * this->spins[(index + 1) % this->len];
 		dE -= 2 * h * this->spins[index];
 	}
-	if(!this->accept(exp(-dE * this->B))){
-		spins[index] *= -1;
-	} else {
+	if(this->accept(-dE * this->B)){
+		std::cout << -dE * this->B << std::endl;
 		this->E += dE;
 		this->M += dM;
+	} else {
+		spins[index] *= -1; //reverse change
 	}
+	//std::cout << this->E <<std::endl;
 	return 1;
 }
 
