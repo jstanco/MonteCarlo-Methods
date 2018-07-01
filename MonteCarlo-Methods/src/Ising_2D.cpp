@@ -68,6 +68,7 @@ ising_2d::update(){
 	this->spins[i * len + j] *= -1;
 	double dM = 2 * this->SUB(i, j);
 	double dE = 0;
+
 	if(this->len < 2){
 		dE = 0;
 	} else {
@@ -77,7 +78,7 @@ ising_2d::update(){
 		dE -= 2 * J * this->SUB(i, j) * this->SUB(i, (j + 1) % this->wid);
 		dE -= 2 * h * this->SUB(i, j);
 	}
-	if(!this->accept(exp(-dE * this->B))){
+	if(!this->accept(-dE * this->B)){
 		this->spins[i * len + j] *= -1;
 	} else {
 		this->E += dE;
