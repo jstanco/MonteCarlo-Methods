@@ -15,8 +15,8 @@ random_ising_1d(unsigned int len)
 {
 	std::vector<int> chain(len);
 	for(unsigned i = 0; i < len; i++){
-		int randInt = 2 * (rand() % 2) - 1;
-		chain[i] = randInt;
+		int rand_int = 2 * (rand() % 2) - 1;
+		chain[i] = rand_int;
 	}
 	return chain;
 }
@@ -54,8 +54,6 @@ ising_1d::update(){
 	this->spins[index] *= -1;
 	double dM = 2 * this->spins[index];
 	double dE = 0;
-	std::cout << "update" << std::endl;
-	//std::cout << this->E <<std::endl;
 	if(this->len < 2){
 		dE = 0;
 	} else {
@@ -70,7 +68,6 @@ ising_1d::update(){
 	} else {
 		spins[index] *= -1; //reverse change
 	}
-	//std::cout << this->E <<std::endl;
 	return 1;
 }
 

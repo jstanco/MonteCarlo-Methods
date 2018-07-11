@@ -9,16 +9,15 @@
 #ifndef help_h
 #define help_h
 
-
-int flip(double x = .5);
-int randInt(uint a, uint b);
-int randInt(uint a);
-double min(double x1, double x2);
-double fRand(double fMin, double fMax);
-double plusMinus(double x);
-double randNorm();
-arma::vec normDistVec(int n);
-arma::vec uniDistVec(int n);
+int 		flip( 		 double x = .5 	);
+int 		rand_int( 	 size_t, size_t );
+int 		rand_int( 	 size_t 		);
+double 		min( 		 double, double );
+double 		fRand( 		 double, double );
+double 		plusMinus( 	 double 		);
+double 		randNorm();
+arma::vec 	normDistVec( size_t 		);
+arma::vec 	uniDistVec(  size_t 		);
 
 
 #endif /* help_h */

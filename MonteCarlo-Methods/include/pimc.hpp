@@ -6,7 +6,7 @@
 
 
 #include "state_base.hpp"
-#include "lattice.hpp"
+//#include "lattice.hpp"
 
 typedef arma::cube path_storage;
 typedef arma::mat path;

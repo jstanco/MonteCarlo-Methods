@@ -17,8 +17,8 @@ random_ising_2d(unsigned int len, unsigned int wid)
 	std::vector<int> chain(size);
 	for(unsigned i = 0; i < size; i++)
 	{
-		int randInt = 2 * (rand() % 2) - 1;
-		chain[i] = randInt;
+		int rand_int = 2 * (rand() % 2) - 1;
+		chain[i] = rand_int;
 	}
 	return chain;
 }
@@ -116,6 +116,11 @@ ising_2d::computeEnergy()
 	}
 	return E = -Hs * this->J - Hm * this->h;
 }
+
+
+// ( 1 ) Generalize Dimension
+//		- Ising Base --> ( not necessary )
+//		- ising_state -> ( will be generalized version of ising_nd ) --> 
 
 
 double

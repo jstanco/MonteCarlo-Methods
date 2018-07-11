@@ -277,7 +277,7 @@ pimc_state::cycleEndpts(const int cycle[], uint pSize, uint t){
 int
 pimc_state::permute(const int pInd[], uint pSize){
 
-	int t0 = randInt(t0_max);
+	int t0 = rand_int(t0_max);
 	int tf = t0 + clip_size - 1;
 	old_paths = path_storage(pSize, clip_size, dim);
 	cycleEndpts(pInd, pSize, tf);
@@ -326,13 +326,13 @@ pimc_state::permutation(){
 int
 pimc_state::bisection(){
 	//want to ensure that the number of moves is 
-	int moveSize = 1;//randInt(n_part);
+	int moveSize = 1;//rand_int(n_part);
 	int pInd[moveSize];
 
-	pInd[0] = randInt(n_part);
+	pInd[0] = rand_int(n_part);
 
 	//can create a random vector of particle moves
-	int t0 = randInt(t0_max);
+	int t0 = rand_int(t0_max);
 
 	startMove(pInd, moveSize);
 	old_paths = path_storage(moveSize, clip_size, dim);
@@ -357,7 +357,7 @@ pimc_state::checkParticleMove(uint p_index, const arma::vec& dr){
 
 int
 pimc_state::centerOfMass(){
-	int p_index = randInt(n_part);
+	int p_index = rand_int(n_part);
 	arma::vec dr = uniDistVec(dim) * therm_wl(p_index);	
 	double dS = checkParticleMove(p_index, dr);
 	//printf("Change in action from moving particle %u:\t%f\n", p_index, dS);
@@ -385,8 +385,8 @@ pimc_state::checkSingleBeadMove(uint p_index, uint t, const bead& dr){
 
 int
 pimc_state::singleSlice(){
-	int p_index = randInt(n_part);
-	int t = randInt(1, n_slice - 1);
+	int p_index = rand_int(n_part);
+	int t = rand_int(1, n_slice - 1);
 	arma::vec dr = uniDistVec(dim) * therm_wl(p_index);
 	double dS = checkSingleBeadMove(p_index, t, dr);
 	//printf("Change in action from moving bead %u, %u:\t%f\n", p_index, t, dS);

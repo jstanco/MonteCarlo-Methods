@@ -3,7 +3,6 @@
 
 #include "world"
 #include "help.hpp"
-#include "Distribution.hpp"
 
 
 #ifndef markov_chain_h
@@ -15,15 +14,15 @@ class markov_chain
 {
 protected:
 	std::vector<T*> chain;
-	virtual T* transition(T*);
-	int initialize();
-	int burn(T* state, uint iter);
-	virtual int printData(T* state, uint iter);
+	virtual T* 		transition( T* );
+	int 			initialize();
+	int 			burn( T* state, uint iter );
+	virtual int 	print_data( T* state, uint iter );
 public:
 	markov_chain(){};
 	~markov_chain();
-	virtual inline int run(T*, unsigned, unsigned burn = 0, unsigned lag = 0, bool save = false, bool print = false);
-	virtual int clear();
+	virtual inline int 	run( T*, uint, uint burn = 0, uint lag = 0, bool save = false, bool print = false );
+	virtual int 		clear();
 
 	std::vector<T*>& getChain();
 };
@@ -38,8 +37,8 @@ markov_chain<T>::~markov_chain(){
 
 template<class T>
 inline T*
-markov_chain<T>::transition(T* prev){
-	T* proposed = new T(*prev);
+markov_chain<T>::transition( T* prev ){
+	T* proposed = new T( *prev );
 	proposed->update();
 	return proposed;
 }
@@ -47,10 +46,10 @@ markov_chain<T>::transition(T* prev){
 
 template<class T>
 inline int
-markov_chain<T>::printData(T* state, uint toGo){
-	printf("|------------------------------------------------|\n");
-	printf("Iterations to go:   %d\n", toGo);
-	state->printData();
+markov_chain<T>::print_data( T* state, uint toGo ){
+	printf( "|------------------------------------------------|\n" );
+	printf( "Iterations to go:   %d\n", toGo );
+	state->print_data();
 	return 1;
 }
 
@@ -59,16 +58,16 @@ template<class T>
 inline int
 markov_chain<T>::initialize(){
 	clear();
-	chain = std::vector<T*>();
+	chain = std::vector<T *>();
 	return 1;
 }
 
 
 template<class T>
 inline int
-markov_chain<T>::burn(T* state, uint _burn){
-	for(uint i = 0; i < _burn; i++){
-		state->update();
+markov_chain<T>::burn( T* state, uint _burn ){
+	for( uint i = 0; i < _burn; i++ ){
+		state->update( true );
 	}
 	return 1;
 }
@@ -76,28 +75,22 @@ markov_chain<T>::burn(T* state, uint _burn){
 
 template<class T>
 inline int
-markov_chain<T>::run(T *init, unsigned int iter, unsigned int _burn, unsigned int lag, bool save, bool print)
+markov_chain<T>::run( T *init, uint iter, uint _burn, uint lag, bool save, bool print )
 {
 	initialize();
-	chain.push_back(new T(*init));
+	burn( init, _burn );
 
-	burn(chain[0], _burn);
-
-	if(save){
-		for(uint i = 1; i < iter; i++){	
-			burn(chain[i - 1], lag);
-			chain.push_back(transition(chain[i - 1]));
-			if(print && i % 1000000 == 0){
-				printData(chain[i], iter - i);
-			}
+	for( size_t i = 0; i < iter; i++ )
+	{	
+		burn( init, lag );
+		init->update();
+		if( save )
+		{
+			chain.push_back( new T( *init ) );
 		}
-	} else {
-		for(uint i = 1; i < iter; i++){	
-			burn(chain[0], lag);
-			chain[0]->update();
-			if(print && i % 1000000 == 0){
-				printData(chain[0], iter - i);
-			}
+		if( print && i % 100000 == 0 )
+		{
+			print_data( init, iter - i );
 		}
 	}
 	return 1;
@@ -109,7 +102,7 @@ inline int
 markov_chain<T>::clear(){
 	for(unsigned i = 0; i < chain.size(); i++)
 	{
-		if(this->chain[i]) delete this->chain[i];
+		if( this->chain[ i ] ) delete this->chain[i];
 	}
 	this->chain.clear();
 	return 1;

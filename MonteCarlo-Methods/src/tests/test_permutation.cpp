@@ -70,7 +70,7 @@ int swap(int arr[], uint i, uint j){
 
 
 int uniformDraw(const int arr[], size_t len){
-	return arr[randInt(len)];
+	return arr[rand_int(len)];
 }
 
 

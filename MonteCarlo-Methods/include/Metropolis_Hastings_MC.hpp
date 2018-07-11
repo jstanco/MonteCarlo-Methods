@@ -16,7 +16,7 @@ public:
 	double expVal(const double (*f)(T*));
 	double variance(const double (*f)(T*));
 
-	void printChain();
+	void print_chain();
 };
 
 
@@ -50,7 +50,7 @@ metropolis_hastings_mc<T>::variance(const double (*f)(T*)){
 
 template<class T>
 inline void
-metropolis_hastings_mc<T>::printChain(){
+metropolis_hastings_mc<T>::print_chain(){
 	for(unsigned i = 0; i < this->chain.size(); i++)
 	{
 		std::cout << i << "    " << this->chain[i].logProb() << std::endl;

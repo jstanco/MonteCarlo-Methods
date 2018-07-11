@@ -29,7 +29,7 @@ public:
 
 	bool operator ==(const ising_base&);
 	bool operator >(const ising_base&);
-	virtual int printData();
+	virtual int print_data();
 };
 
 
@@ -66,7 +66,7 @@ ising_base::temp() const
 
 
 inline int
-ising_base::printData()
+ising_base::print_data()
 {
 	printf("Energy:  %f\nMagnetization:  %f\n", this->energy(), this->mag());
 	return 1;
