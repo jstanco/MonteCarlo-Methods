@@ -37,7 +37,7 @@ As for the required libraries:
   
   Armadillo : | C++ library for linear algebra & scientific computing | (http://arma.sourceforge.net/) | This one also uses BLAS and LAPACK, and as such, will include its own versions of both.  These are not as optimized as OpenBlas, and thus one can go through the process of linking OpenBlas and its LAPACK(E) implementation to Armadillo if one sees fit.  
   
-  FFTW3 : Fastest Fourier Transform (in the) West | This is separate from all of the others, and is used for ridiculously fast fourier transforms of both single and multidimenional data of both real and complex numbers.  It uses a type FFTW_complex which is really just an aliased double[2].  There is a way to link it such that the default FFTW_complex type is double _Complex (_) from the <complex.h> c library, although it is not assumed in this code.
+  FFTW3 : Fastest Fourier Transform (in the) West | This is separate from all of the others, and is used for ridiculously fast fourier transforms of both single and multidimenional data of both real and complex numbers.  It uses a type FFTW_complex which is really just an aliased double[2].  There is a way to link it such that the default FFTW_complex type is double '_'Complex_ from the <complex.h> c library, although it is not assumed in this code.
   
 
 
