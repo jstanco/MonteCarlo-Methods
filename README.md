@@ -6,12 +6,12 @@ For the moment, The API consists of some templated MCMC classes for updating a u
 
 As a proof of functionality of the API, there is an implementation written for an n-demensinal square ising lattice.  This involves writing a class which functions as the 'State' which the MCMC object will then run.  The 'State' is a template class that would require certain methods, such as 'update(bool)' or 'prepare(int)', which allow the 'updater' to interface with the state it is updating.  
 
-The Ising State consists of a general rank-n tensor object that stores the value of the spin at each lattice site (implemented as single dimensional vector length N1xN2x...xNd) implemented using the Armadillo API for linear algebra (http://arma.sourceforge.net/), along with a series of different child-classes that implement custom update procedures in accordance with different algorithms.  Currently, there are both single update (Metropolis-Hastings, Heat-Bath, Glauber) and clustering (Wolff) algorithms.  Note while the heat-bath and Glauber procedures are different in theory, they do reduce to the same acceptance probability in the case of the Ising System.  I have included both for the sake of generality.  
+The Ising State consists of a general rank-n tensor object that stores the value of the spin at each lattice site (implemented as single dimensional vector length N1xN2x...xNd) implemented using the Armadillo API for linear algebra (http://arma.sourceforge.net/), along with a series of different child-classes that implement custom update procedures in accordance with different algorithms.  Currently, there are both single update (Metropolis-Hastings, Heat-Bath, Glauber) and clustering (Wolff) algorithms.  Note, while the heat-bath and Glauber procedures are different in theory, they do reduce to the same acceptance probability in the case of the Ising System.  I have included both for the sake of generality.  
 
-I am in the process of the adding the worm algorithm.  I am also adapting the model to quantum spin systems, with the hope of being to eventually simulate not just a square lattice, but triangular and polycrystalline (using a delaunay triangulation).  
+I am in the process of the adding the worm algorithm.  I am also adapting the model to quantum spin systems, with the goal of simulating not just a square lattice, but triangular and polycrystalline (using a delaunay triangulation).  
 
-The two basic precedures available are:
-  1) MCMC run with the algorithm of choice customizing: lattice size, iterations, temperature, z-field and coupling constant J in [+1,-1] from the command line.  This prints the expectation value of energy and abs(magnetization), along with time taken.
+The two basic procedures available are:
+  1) MCMC run with the algorithm of choice: From the command line specify: lattice size, iterations, temperature, z-field and coupling constant J in [+1,-1].  This prints the expectation value of energy and abs(magnetization), along with time taken.
   
   2) From within main file (ising_temp_dependence.cpp), specify algorithm as well as range of temperatures to examine: energy, abs(mag), specific heat, and mag susceptibility.  These results currently agree nicely in 2D with Onsager's analytic solution, as well as with other MCMC simulations.
   
