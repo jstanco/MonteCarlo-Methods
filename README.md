@@ -25,8 +25,7 @@ The user must link their own BLAS,LAPACK,FFTW3,armadillo libraries.  The file "m
 
 Once the paths for the headers are included, from within the monte_carlo_methods directory type in bash:
   
-  cd src
-  make all
+  cd src && make all
   
 The binaries for the two reoutines are respectively: /bin/ising and /bin/ising_t_dependence
 For more details on the ising model see: https://arxiv.org/pdf/1404.0209.pdf
