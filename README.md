@@ -27,9 +27,10 @@ Once the paths for the headers are included, from within the monte_carlo_methods
   
   cd src && make all
   
-The binaries for the two reoutines are respectively: /bin/ising and /bin/ising_t_dependence
-For more details on the ising model see: https://arxiv.org/pdf/1404.0209.pdf
-For the required libraries: 
+The binaries for the two routines are respectively: /bin/ising and /bin/ising_t_dependence.  
+For more details on the ising model see: https://arxiv.org/pdf/1404.0209.pdf.  
+As for the required libraries: 
+
   BLAS : Basic Linear Algebra Subroutines | https://www.openblas.net/ | There are MANY distributions/versions of this, but    OpenBlas is both open source and one of the fastest, using the GoToBlas source, which is used in supercomputing clusters.
   
   LAPACK : Linear Algebra PACKage | http://www.netlib.org/lapack/ | Couple of things: 1) This is not needed if OpenBlas is installed from the given website, as OpenBlas uses some LAPACK routines and thus includes its own version. 2) Note that the original source is written in FORTRAN77, and is usually linked to C++ via the 'extern "C"' keyword.  However, the main LAPACK implementations (including the one that comes with OpenBlas) include a separate implementation in C called LAPACKE.  Installing LAPACK will also install LAPACKE by default, although both the fortran and C libraries must be linked.
