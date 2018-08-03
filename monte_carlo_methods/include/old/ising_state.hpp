@@ -29,11 +29,11 @@ mcmc_state::accept( double acc_prob )
 }
 
 
-template <class T1>
+template <class U>
 class ising_state : public mcmc_state {
-	friend class markov_chain_mc<ising_state<T1> >;
+	friend class markov_chain_mc<ising_state<U> >;
 protected:
-	T1 lat;
+	U lat;
 	//keeping track of obervables
 	Signal::signal M;
 	Signal::signal E;
@@ -64,8 +64,8 @@ public:
 
 
 /// Metropolis-Hastings
-template<class T1>
-class ising_state_mh : public ising_state<T1> {
+template<class U>
+class ising_state_mh : public ising_state<U> {
 protected:
 	double acc_prob(double dE) {
 		return exp(-this->B * dE);
@@ -75,12 +75,12 @@ public:
 						const double T, 
 						const double J, 
 						const double h) : 
-	ising_state<T1>(r_max, T, J, h) {}
+	ising_state<U>(r_max, T, J, h) {}
 };
 
 
-template<class T1>
-class ising_state_glauber : public ising_state<T1> {
+template<class U>
+class ising_state_glauber : public ising_state<U> {
 protected:
 	double acc_prob(double dE) {
 		double b = exp(-this->B * dE);
@@ -91,12 +91,12 @@ public:
 						const double T, 
 						const double J, 
 						const double h) : 
-	ising_state<T1>(r_max, T, J, h) {}
+	ising_state<U>(r_max, T, J, h) {}
 };
 
 
-template<class T1>
-class ising_state_heat_bath : public ising_state<T1> {
+template<class U>
+class ising_state_heat_bath : public ising_state<U> {
 protected:
 	double acc_prob(double E_nn) {
 		double dS = -this->B * 2 * E_nn;
@@ -108,7 +108,7 @@ public:
 						const double T, 
 						const double J, 
 						const double h) : 
-	ising_state<T1>(r_max, T, J, h) {}
+	ising_state<U>(r_max, T, J, h) {}
 
 	void update_lat() {
 		int flip_index = rand_int(this->lat.n_site);
@@ -122,8 +122,8 @@ public:
 
 
 //wolff cluster algorithm
-template<class T1>
-class ising_state_wolff : public ising_state_mh<T1> {													
+template<class U>
+class ising_state_wolff : public ising_state_mh<U> {													
 protected:
 	double flip_prob;
 	double calc_flip_prob(const double _T, const double J){
@@ -135,7 +135,7 @@ public:
 						const double J, 
 						const double h ) : 
 	flip_prob( calc_flip_prob(T, J)),
-	ising_state_mh<T1>(r_max, T, J, h) {}
+	ising_state_mh<U>(r_max, T, J, h) {}
 
 	void set_temp(const double _T){
 		this->T = _T;
@@ -151,12 +151,12 @@ public:
 };
 
 
-template <class T1>
-ising_state<T1>::ising_state(const std::vector<uint> r_max, 
+template <class U>
+ising_state<U>::ising_state(const std::vector<uint> r_max, 
 							const double T, 
 							const double J, 
 							const double h)
-:	lat(T1( to_arma(r_max), J, h)),
+:	lat(U(to_arma(r_max), J, h)),
 	T(T),
 	B(pow(1 * T, -1)),
 	iter(0) {}

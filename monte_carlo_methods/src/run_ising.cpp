@@ -1,8 +1,8 @@
 //created by John Stanco 7.1.18
 
 
-#include "../include/ising_state.hpp"
-#include "../include/markov_chain_mc.hpp"
+#include "../include/ising.hpp"
+#include "../include/markov_chain.hpp"
 
 template<class T1>
 void print_ising_run(const size_t iter, 
@@ -11,11 +11,11 @@ void print_ising_run(const size_t iter,
 				const double T, 
 				const double J, 
 				const double h,  
-				const std::vector<uint> lat_spec,
+				const std::vector<size_t> latsize,
 				const double t,
 				const T1 & init,
 				const std::string method) {
-	size_t dim = lat_spec.size();
+	size_t dim = latsize.size();
 
 	std::string mag;
 	std::string size;
@@ -35,21 +35,21 @@ void print_ising_run(const size_t iter,
 	std::cout << "h:\t" 	<< h 	<< std::endl;
 	std::cout << "Size:\t";
 	for (size_t i = 0; i < dim - 1; i++) {
-		size += std::to_string(lat_spec[i]) + "x";
-		std::cout << lat_spec[i] << "x";
+		size += std::to_string(latsize[i]) + "x";
+		std::cout << latsize[i] << "x";
 	}
-	size += std::to_string(lat_spec[dim-1]);
-	std::cout << lat_spec[dim - 1]
+	size += std::to_string(latsize[dim-1]);
+	std::cout << latsize[dim - 1]
 				<< "\ntime:\t" 
 				<< (float)t / CLOCKS_PER_SEC 
 				<< " sec" << std::endl;
-	printf("Mag:\t%lf\n", mean(init.mag()));
-	printf("Energy:\t%lf\n", mean(init.energy()));
+	printf("Mag:\t%lf\n", mean(init.M_data()));
+	printf("Energy:\t%lf\n", mean(init.E_data()));
 	std::cout << "-------------------\n";
 
-	print(init.energy(),"../data/ising_energy_"+size+".dat");
-	print(init.mag(),"../data/ising_mag_"+size+".dat");
-	print(autocorr(init.mag()),"../data/ising_auto_"+size+".dat");
+	print(init.E_data(),"../data/ising_energy_"+size+".dat");
+	print(init.M_data(),"../data/ising_mag_"+size+".dat");
+	print(autocorr(init.M_data()),"../data/ising_auto_"+size+".dat");
 }
 
 
@@ -60,16 +60,16 @@ void run_ising(const size_t iter,
 			const double T, 
 			const double J, 
 			const double h, 
-			const std::vector<uint> lat_spec,
+			const std::vector<size_t> latsize,
 			const std::string method) {
-	T1 init(lat_spec, T, J, h);
+	T1 init(J, h, T, latsize);
 	markov_chain_mc<T1> mcmc;
 
 	clock_t t = clock();
 	T1 rslt = mcmc.run(init, iter);
 
 	t = clock() - t;
-	print_ising_run<T1>(iter, burn, lag, T, J, h, lat_spec, t, rslt, method);
+	print_ising_run<T1>(iter, burn, lag, T, J, h, latsize, t, rslt, method);
 }
 
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 	if (argc == 1) {
 		display_usage();
 	} else {
-		std::vector<uint> lat_spec;
+		std::vector<size_t> latsize;
 		double J 	= 1;
 		double h 	= 0;
 		double T 	= 0;
@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
 				check_arg( argc, argv, i );
 				while (i + 1 < argc && !is_switch(argv[i + 1])) { //parse all non-switch arguments following this switch 
 					sscanf( argv[ i + 1 ], "%zu", &n );
-					lat_spec.push_back(n);
+					latsize.push_back(n);
 					i++;
 					size_flag = 1;
 				}
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
 			display_incomplete();
 		}
 
-		run_ising<square_mh_ising>(iter, burn, lag, T, J, h, lat_spec, "MH");
+		run_ising<Ising::square_wolff_ising>(iter, burn, lag, T, J, h, latsize, "Wolf");
 	}
 	return 1;
 }

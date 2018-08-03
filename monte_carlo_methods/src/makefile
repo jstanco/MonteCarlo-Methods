@@ -11,9 +11,9 @@ CC = g++
 DEBUG = -g
 CFLAGS = -c -I$(IDIR) $(DEBUG)
 
-_OBJS = help.o ising_lattice.o
+_OBJS = help.o graph.o signal.o
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
-_DEPS = markov_chain.hpp markov_chain_mc.hpp ising_state.hpp ising_lattice.hpp pimc.hpp state_base.hpp part_storage.hpp signal.hpp help.hpp
+_DEPS = markov_chain.hpp ising.hpp graph.hpp pimc.hpp signal.hpp help.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 LFLAGS = $(DEBUG)
@@ -35,7 +35,7 @@ ising_t_dependence : $(ODIR)/ising_temp_dependence.o $(OBJS)
 	@$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 $(ODIR)/%.o : %.cpp $(DEPS)
-	@$(CC) -o $@ $< $(CFLAGS)
+	@$(CC) -o $@ $< $(CFLAGS) -std=c++11
 	
 .PHONY: clean
 

@@ -6,11 +6,10 @@
 
 #include "mc_methods.hpp"
 
-template<class T>
-arma::Col<T> to_arma(const std::vector<T>& x){
-	arma::Col<T> y(x.size());
-	for(size_t i = 0; i < x.size(); i++)
-	{
+inline
+arma::uvec to_arma(const std::vector<uint>& x){
+	arma::uvec y(x.size());
+	for(size_t i = 0; i < x.size(); i++){
 		y(i) = x[i];
 	}
 	return y;

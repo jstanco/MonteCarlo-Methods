@@ -105,4 +105,50 @@ inline std::vector<T*>&
 markov_chain<T>::getChain(){
 	return this->chain;
 }
+
+template<class T>
+class markov_chain_mc : public markov_chain<T>{
+public:
+	markov_chain_mc(){}
+	
+	double expVal(const double (*f)(T*));
+	double variance(const double (*f)(T*));
+
+	void print_chain();
+};
+
+
+template<class T>
+inline double
+markov_chain_mc<T>::expVal(const double (*f)(T*)){
+	double acc = 0;
+	double len = this->chain.size();
+	for(size_t i = 0; i < len; i++){
+		acc += f(this->chain[i]);
+	}
+	return acc / len;
+}
+
+
+template<class T>
+inline double
+markov_chain_mc<T>::variance(const double (*f)(T*)){
+	double acc = 0;
+	double len = this->chain.size();
+	double mean = this->expVal(f);
+	for(size_t i = 0; i < len; i++){
+		acc += pow(f(this->chain[i]) - mean, 2);
+	}
+	return acc / len;
+}
+
+
+template<class T>
+inline void
+markov_chain_mc<T>::print_chain(){
+	for(size_t i = 0; i < this->chain.size(); i++){
+		std::cout << i << "    " << this->chain[i].logProb() << std::endl;
+	}
+}
+
 #endif /* MARKOV_CHAIN_h */

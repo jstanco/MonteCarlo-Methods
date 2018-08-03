@@ -125,3 +125,4 @@ int square_ising_lattice::flip_cluster(const size_t spin_index, const double fli
 	reset_cluster();
 	return m_n;
 }
+

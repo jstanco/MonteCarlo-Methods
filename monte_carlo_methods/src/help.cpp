@@ -29,130 +29,101 @@ static double ws[ 256 ];
 static double ys[ 256 ];
 
 
-double min(double x1, double x2)
-{
-	return ( x1 > x2 )? x2 : x1;
+double min(const double x1, const double x2){
+	return(x1 > x2)? x2 : x1;
 }
 
 
-double fRand( double fMin, double fMax )
-{
+double fRand(const double fMin, const double fMax){
     double f = UNI;
-    return fMin + f * ( fMax - fMin );
+    return fMin + f * (fMax - fMin);
 }
 
 
-int
-rand_int( size_t a, size_t b )
-{
+int rand_int(const size_t a, const size_t b){
 	int interval = b - a;
-	if( interval < 0 ){
+	if(interval < 0){
 		throw "|  function: rand_int  |  file: help.cpp  |  error:  arguments must be specified in ascending order  |";
-	} else if( interval == 0 ){
+	} else if(interval == 0){
 		return 0;
 	}
-	return a + generator() % ( interval );
+	return a + generator() % (interval + 1);
 }
 
 
-int
-rand_int( size_t a )
-{
-	return rand_int( 0, a );
+int rand_int(const size_t a){
+	if(a == 0){ return 0; }
+	return rand_int(0, a - 1);
 }
 
 
-int flip( double x )
-{
-	if( 0 > x || x > 1 )
-	{
+int flip(const double x){
+	if(0 > x || x > 1){
 		throw "|  function: flip  |  file: help.cpp  |  error:  input value 'x' must be between 0 and 1  |";
 	}
-	if( UNI < x )
-	{
-		return 1;
-	}
+	if(UNI < x){ return 1; }
 	return 0;
 }
 
 
-arma::vec
-uniDistVec( size_t n )
-{
-	arma::vec ran( n );
-	for( size_t i = 0; i < n; i++ )
-	{
-		ran( i ) = UNI1;
-	}
+arma::vec uniDistVec(const size_t n){
+	arma::vec ran(n);
+	for(size_t i = 0; i < n; i++){ ran(i) = UNI1; }
 	return ran;
 }
 
 
-double
-boxMuller(){
+double boxMuller(){
 	double s = 2;
 	double u = 0;
 	double v = 0;
-	while( s > 1 ){
+	while(s > 1){
 		u = UNI;
 		v = UNI;
 		s = u * u + v * v;
 	}
-	double y = u * sqrt( -2 * log( s ) / s );
-	return ( UNI1 > 0 ) ? y : -y;
+	double y = u * sqrt(-2 * log(s) / s);
+	return (UNI1 > 0) ? y : -y;
 }
 
 
-double invGaussian( double x ){
-	return sqrt( -2 * log( x ) );
+double invGaussian(double x){
+	return sqrt(-2 * log(x));
 }
 
 
-int
-compute_table()
-{
+void compute_table(){
 	double A = .00492867323399;
-	table[ 255 ][ 1 ] = .00126028593;
-	for( size_t i = 255; i > 0; i-- )
-	{
-		table[ i ][ 0 ] = invGaussian( table[ i ][ 1 ] );
-		table[ i - 1 ][ 1 ] = table[ i ][ 1 ] + A / table[ i ][ 0 ];
+	table[255][1] = .00126028593;
+	for(size_t i = 255; i > 0; i--){
+		table[i][0] = invGaussian(table[i][1]);
+		table[i - 1][1] = table[i][1] + A / table[i][0];
 	}
-	table[ 255 ][ 0 ] = A / table[ 255 ][ 1 ];
-	r = table[ 255 ][ 0 ];
-	return 1;
+	table[255][0] = A / table[255][1];
+	r = table[255][0];
 }
 
 
-int
-compute_ks()
-{
-	for( size_t i = 1; i < 256; i++ )
-	{
-		ks[ i ] = table[ i - 1 ][ 0 ] / table[ i ][ 0 ] * double_signed;
+void compute_ks(){
+	for(size_t i = 1; i < 256; i++){
+		ks[i] = table[i - 1][0] / table[i][0] * double_signed;
 	}
-	ks[ 0 ] = r / table[ 255 ][ 0 ] * double_signed;
-	return 1;
-}
-
-int
-compute_ws()
-{
-	for( size_t i = 1; i < 256; i++ )
-	{
-		ws[ i ] = table[ i ][ 0 ] / double_signed;
-	}
-	ws[ 0 ] = table[ 255 ][ 0 ] / double_signed;
-	return 1;
+	ks[0] = r / table[255][0] * double_signed;
 }
 
 
-int compute_ys(){
-	for( size_t i = 0; i < 256; i++ )
-	{
-		ys[ i ] = table[ i ][ 1 ];
+void compute_ws(){
+	for(size_t i = 1; i < 256; i++){
+		ws[i] = table[i][0] / double_signed;
 	}
-	return 1;
+	ws[0] = table[255][0] / double_signed;
+}
+
+
+void compute_ys(){
+	for(size_t i = 0; i < 256; i++){
+		ys[i] = table[i][1];
+	}
 }
 
 
@@ -171,22 +142,22 @@ static int set = zigSet();
 inline
 double ziggurat(){
 	double x, y; int j; unsigned short i;
-	while( true ){
+	while(true){
 		j = rand_int32;
 		i = j&255;
-		if( abs( j ) < ks[ i ] ){
-			return j * ws[ i ];
+		if(abs(j) < ks[i]){
+			return j * ws[i];
 		}
-		while( i == 0 ){
-			x = -log( UNI ) / x;
-			y = -log( UNI );
-			if( y + y > x * x ){
-				return ( j > 0 )? x + r : -x - r;
+		while(i == 0){
+			x = -log(UNI) / x;
+			y = -log(UNI);
+			if(y + y > x * x){
+				return (j > 0)? x + r : -x - r;
 			}
 		}
-		x = j * ws[ i ];
-		y = UNI * ( ys[ i ] - ys[ i - 1 ] );
-		if( y < exp( -.5 * x * x ) - ys[ i ] ){
+		x = j * ws[i];
+		y = UNI * (ys[i] - ys[i - 1]);
+		if(y < exp(-.5 * x * x) - ys[i]){
 			return x;
 		}
 	}
@@ -199,32 +170,24 @@ double randNorm(){
 }
 
 
-arma::vec
-normDistVec( size_t n )
-{
-	arma::vec ran( n );
-	for( size_t i = 0; i < n; i++ )
-	{
-		ran( i ) = randNorm();
+arma::vec normDistVec(const size_t n){
+	arma::vec ran(n);
+	for(size_t i = 0; i < n; i++){
+		ran(i) = randNorm();
 	}
 	return ran;
 }
 
 
-arma::vec
-uni_vec_01( const size_t n )
-{
-	arma::vec ran( n );
-	for( size_t i = 0; i < n; i++ )
-	{
-		ran( i ) = UNI;
+arma::vec uni_vec_01(const size_t n){
+	arma::vec ran(n);
+	for(size_t i = 0; i < n; i++){
+		ran(i) = UNI;
 	}
 	return ran;
 }
 
 
-arma::vec
-uniDistVec(  const arma::vec& min, const arma::vec& max )
-{
-	return min + ( max - min ) % uni_vec_01( min.n_elem );
+arma::vec uniDistVec(const arma::vec& min, const arma::vec& max){
+	return min + (max - min) % uni_vec_01(min.n_elem);
 }

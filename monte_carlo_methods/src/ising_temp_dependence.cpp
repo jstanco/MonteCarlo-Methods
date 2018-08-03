@@ -1,8 +1,8 @@
 //created by John Stanco 7.11.18
 
 
-#include "../include/ising_state.hpp"
-#include "../include/markov_chain_mc.hpp"
+#include "../include/ising.hpp"
+#include "../include/markov_chain.hpp"
 
 typedef std::vector<std::string> str_arr;
 
@@ -30,24 +30,25 @@ double mag_sus(const T & ising){
 }
 
 
-std::vector<uint> build_r_max(const size_t dim){
-	std::vector<uint> _r_max(dim);
+std::vector<size_t> build_latsize(const size_t dim){
+	std::vector<size_t> latsize(dim);
 	for(size_t i = 0; i < dim; i++){
-		_r_max[i] = 20;
+		latsize[i] = 20;
 	}
-	return _r_max;
+	return latsize;
 }
 
 
-str_arr build_filename_string(const std::vector<uint> &rmax){
+
+str_arr build_filename_string(const std::vector<size_t> &latsize){
 	str_arr	filenames(4);
 	std::string	f_extension = ".dat";
 	filenames[0] = "../data/energy";
 	filenames[1] = "../data/magnetization";
 	filenames[2] = "../data/specific_heat_capacity";
 	filenames[3] = "../data/magnetic_susceptibility";
-	for(size_t i = 0; i < rmax.size(); i++){
-		f_extension = "_" + std::to_string(rmax[i]) + f_extension;
+	for(size_t i = 0; i < latsize.size(); i++){
+		f_extension = "_" + std::to_string(latsize[i]) + f_extension;
 	}
 	for(size_t i = 0; i < 4; i++){
 		filenames[i] += f_extension;
@@ -57,9 +58,9 @@ str_arr build_filename_string(const std::vector<uint> &rmax){
 
 
 template<class U>
-void run_T_dependence(const size_t iter, const std::vector<uint> &rmax){
+void run_T_dependence(const size_t iter, const std::vector<size_t> &latsize){
 
-	str_arr filenames = build_filename_string(rmax);
+	str_arr filenames = build_filename_string(latsize);
 	size_t n_obs = 4;
 	FILE *pFiles[n_obs];
 	double obs[4];
@@ -78,17 +79,17 @@ void run_T_dependence(const size_t iter, const std::vector<uint> &rmax){
 
 	for(float i = 0; i < Tsteps; i++){
 		double T = TMin + i * mult;
-		U init(rmax, T, J, h);
+		U init(J, h, T, latsize);
 		U rslt = MCMC.run(init, iter, 100, 0, false);
 
 		/// <E> - Energy
-		obs[0] = mean(rslt.energy()) / rslt.n_site();
+		obs[0] = mean(rslt.E_data()) / rslt.n_site();
 		/// <M> - Magnetization
-		obs[1] = mean(rslt.mag()) / rslt.n_site();
+		obs[1] = mean(rslt.M_data()) / rslt.n_site();
 		/// Cv - Specific Heat
-		obs[2] = var(rslt.energy()) * pow(T,-2) / rslt.n_site();
+		obs[2] = var(rslt.E_data()) * pow(T,-2) / rslt.n_site();
 		/// X - Magnetic Susceptibility
-		obs[3] = var(rslt.mag()) * pow(T,-1) / rslt.n_site();
+		obs[3] = var(rslt.M_data()) * pow(T,-1) / rslt.n_site();
 
 		for(size_t j = 0; j < n_obs; j++){
 			fprintf(pFiles[j], "%.4f\t\t%.4f\n", T, obs[j]);
@@ -100,16 +101,16 @@ void run_T_dependence(const size_t iter, const std::vector<uint> &rmax){
 
 template<class T>
 void ising_T_dependence(size_t dim){
-	std::vector<uint> r_max = build_r_max(dim);
+	std::vector<size_t> latsize = build_latsize(dim);
 	size_t 	iter = 3e3;
-	run_T_dependence<T>(iter, r_max);
+	run_T_dependence<T>(iter, latsize);
 }
 
 
 int main(){
 	timer t;
 	t.start();
-	ising_T_dependence<square_wolff_ising>(2);
+	ising_T_dependence<Ising::square_wolff_ising>(2);
 	t.stop();
 	t.print();
 	return 1;

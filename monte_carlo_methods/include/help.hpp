@@ -6,15 +6,15 @@
 #ifndef HELP_H
 #define HELP_H
 
-int flip(double x = .5);
-int rand_int(size_t, size_t);
-int rand_int(size_t);
-double min(double, double);
-double fRand(double, double);
-double plusMinus(double);
+int flip(const double x = .5);
+int rand_int(const size_t, const size_t);
+int rand_int(const size_t);
+double min(const double, const double);
+double fRand(const double, const double);
+double plusMinus(const double);
 double randNorm();
-arma::vec normDistVec(size_t);
-arma::vec	uniDistVec(size_t);
+arma::vec normDistVec(const size_t);
+arma::vec	uniDistVec(const size_t);
 arma::vec uniDistVec(const arma::vec&, const arma::vec&);
 
 
