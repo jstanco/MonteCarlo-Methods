@@ -14,7 +14,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-typedef arma::vec graphSignal;
+typedef arma::vec graph_signal;
 typedef std::pair<size_t, double> my_pair_t;
 typedef std::vector<my_pair_t> my_container_t;
 
@@ -169,15 +169,15 @@ namespace Graph{
 		void compute_lpn_mtx( const arma::mat& W ) { L = compute_degree_mat(W) - W; }
 		void compute_eigs();
 		/// computes the Dirichlet 2-form -- functions as semi-norm for simple Graph
-		double two_form(const graphSignal f) { return dot( f, L * f ); }
+		double two_form(const graph_signal f) { return dot( f, L * f ); }
 	public:
 		simple_graph(const arma::mat W) : w_d_graph(W) { compute_lpn_mtx(W); compute_eigs(); }
 		/// produces Graph signal in basis of Laplacian eigenvectors
-		graphSignal FT(const graphSignal& f) { return lpn_basis_inv * f; }
+		graph_signal FT(const graph_signal& f) { return lpn_basis_inv * f; }
 		/// returns Graph signal in Cartesian basis
-		graphSignal IFT(const graphSignal& f) { return lpn_basis * f; }
+		graph_signal IFT(const graph_signal& f) { return lpn_basis * f; }
 		/// computes the p-Dirichlet form - generalizes 2-form
-		double p_dirichlet_form(const graphSignal& f, const size_t p );
+		double p_dirichlet_form(const graph_signal& f, const size_t p );
 		void print_mat(const arma::mat& mtx) { mtx.print(); std::cout << "\n"; }
 		void print() {  print_mat(L); }
 	};

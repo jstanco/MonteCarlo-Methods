@@ -261,7 +261,7 @@ void Graph::simple_graph::compute_eigs() {
 
 
 /// computes the p-Dirichlet form - generalizes 2-form
-double Graph::simple_graph::p_dirichlet_form(const graphSignal& f, const size_t p) {
+double Graph::simple_graph::p_dirichlet_form(const graph_signal& f, const size_t p) {
 	if (p == 2) { return two_form(f); }
 	double p_form = 0;
 	for (size_t u = 0; u < n_vert; u++) {
